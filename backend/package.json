@@ -1,0 +1,27 @@
+{
+    "name": "biab",
+    "version": "1.0.4",
+    "description": "",
+    "main": "build/index.js",
+    "scripts": {
+        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start('development')\\\"\""
+    },
+    "nodemonConfig": {
+        "signal": "SIGKILL",
+        "ext": "ts, js, jsx, tsx"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.1",
+        "express_phandler": "^1.0.7",
+        "jsonwebtoken": "^8.5.1",
+        "orma": "^1.0.118",
+        "pg": "^8.7.3",
+        "ts-node": "^10.9.1"
+    },
+    "devDependencies": {
+        "dotenv": "^16.0.1"
+    }
+}
