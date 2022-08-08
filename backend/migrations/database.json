@@ -1,11 +1,14 @@
 {
     "dev": {
         "driver": "pg",
-        "url": {
-            "ENV": "DATABASE_URL"
-        },
+        "user": "test",
+        "password": "zwbIjurm4YtEgaV2Ib26uQ",
+        "host": "free-tier11.gcp-us-east1.cockroachlabs.cloud",
+        "database": "goodly-gnoll-1602.defaultdb",
+        "port": "26257",
         "ssl": {
             "rejectUnauthorized": false
-        }
+        },
+        "schema": "public"
     }
 }

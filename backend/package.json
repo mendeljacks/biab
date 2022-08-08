@@ -14,6 +14,7 @@
     "license": "ISC",
     "dependencies": {
         "cors": "^2.8.5",
+        "cuid": "^2.1.8",
         "express": "^4.18.1",
         "express_phandler": "^1.0.7",
         "jsonwebtoken": "^8.5.1",
