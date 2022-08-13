@@ -5,15 +5,18 @@
     "main": "build/index.js",
     "scripts": {
         "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start('development')\\\"\"",
-        "test": "nodemon --signal SIGKILL --exec mocha --package package.json",
-        "coverage": "nodemon --signal SIGKILL --exec nyc --reporter=lcov mocha --package package.json"
+        "test": "nodemon --exec mocha --package package.json",
+        "coverage": "nodemon --exec nyc mocha --package package.json"
     },
     "nodemonConfig": {
         "signal": "SIGKILL",
-        "ext": "ts, js, jsx, tsx"
+        "ext": "ts, js, jsx, tsx, json"
     },
     "nyc": {
-        "include": "src"
+        "reporter": [
+            "text",
+            "lcov"
+        ]
     },
     "mocha": {
         "require": [
