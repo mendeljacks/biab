@@ -1,6 +1,5 @@
-import cors from 'cors'
-import express from 'express'
-import { handler } from 'express_phandler'
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
 import { introspect } from '../config/orma'
 import {
     login_controller,
@@ -8,22 +7,20 @@ import {
     query_controller,
     signup_controller
 } from './controllers'
+import { handler } from '..'
 
-const port = process.env.PORT || 3001
+const port = Number(process.env.PORT) || 3001
 
-export const start = async (env: string) => {
-    const app = express()
+export const start = async () => {
     await introspect()
-
-    app.use(cors())
-    app.use(express.json({ limit: '50mb' }))
-    app.use(express.urlencoded({ extended: true, limit: '50mb' }))
+    const app = Fastify()
+    await app.register(cors)
 
     app.post('/signup', handler(signup_controller))
     app.post('/login', handler(login_controller))
     app.post('/query', handler(query_controller))
     app.post('/mutate', handler(mutate_controller))
 
-    await new Promise(r => app.listen(port, r as any))
-    console.log('Listening at http://localhost:' + port)
+    await app.listen({ port })
+    console.log(`Server listening on ${port}`)
 }
