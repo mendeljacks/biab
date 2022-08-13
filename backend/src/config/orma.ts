@@ -31,15 +31,20 @@ const add_resource_ids = (mutation: any) => {
         }
     })
 }
+
+export const ensure_valid_mutation = async mutation => {
+    const errors = validate_mutation(mutation, orma_schema as any as OrmaSchema)
+    if (errors.length > 0) {
+        return Promise.reject(errors)
+    }
+}
+
 export const mutate_handler = mutation => {
     return trans(async connection => {
         apply_inherit_operations_macro(mutation)
         add_resource_ids(mutation)
 
-        const errors = validate_mutation(mutation, orma_schema as any as OrmaSchema)
-        if (errors.length > 0) {
-            return Promise.reject(errors)
-        }
+        await ensure_valid_mutation(mutation)
 
         // Run orma mutation
         const mutation_results = await orma_mutate(

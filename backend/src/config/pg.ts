@@ -4,7 +4,8 @@ types.setTypeParser(20, function (val) {
     return parseInt(val, 10)
 })
 
-types.setTypeParser(types.builtins.TIMESTAMP, date => date)
+export const identity = el => el
+types.setTypeParser(types.builtins.TIMESTAMP, identity)
 
 export const pool = new Pool({
     connectionString: process.env.pg,

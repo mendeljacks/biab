@@ -1,36 +1,22 @@
 import { expect } from 'chai'
 import cuid from 'cuid'
 import { beforeEach, describe, test } from 'mocha'
-import * as orma from 'orma/src/index'
+
 import sinon from 'sinon'
 import fs from 'fs'
 import { orma_schema } from '../../../common/orma_schema'
-import { introspect, mutate_handler, query_handler } from '../config/orma'
+import * as orma from '../config/orma'
+import * as orma_original from 'orma'
+import { identity, pool } from '../config/pg'
 
 describe('Crud Orma', () => {
-    beforeEach(async () => {
-        const { users } = await query_handler({
-            users: {
-                id: true,
-                user_has_roles: {
-                    id: true,
-                    roles: {
-                        id: true
-                    }
-                }
-            }
-        })
-        await mutate_handler({
-            $operation: 'delete',
-            users
-        })
-    })
     test('Introspection', async () => {
-        sinon.stub(orma, 'orma_introspect').callsFake(async () => orma_schema)
+        sinon.stub(orma_original, 'orma_introspect').callsFake(async () => orma_schema)
         sinon.stub(fs, 'writeFileSync').callsFake(() => {})
-        await introspect()
+        await orma.introspect()
     })
     test('Validation', async () => {
+        sinon.stub(orma_original, 'orma_mutate').callsFake(async _ => 'called')
         let err = undefined
         try {
             const mutation = {
@@ -38,41 +24,40 @@ describe('Crud Orma', () => {
                 users: [{ oops: 'oops' }]
             }
 
-            await mutate_handler(mutation)
+            await orma.mutate_handler(mutation)
         } catch (e) {
             err = e
         }
+        sinon.restore()
         expect(err.length > 0).to.deep.equal(true)
     })
-    test('Create a user', async () => {
-        const user = {
-            id: { $guid: cuid() },
-            email: 'mendeljacks@gmail.com',
-            password: 'password',
-            first_name: 'Mendel',
-            last_name: 'Jackson',
-            phone: '1234567890'
-        }
-        const mutation = {
-            $operation: 'create',
-            users: [user]
-        }
-
-        const mutate_response = await mutate_handler(mutation)
-        expect(mutate_response.users.length).to.equal(1)
+    test(identity.name, () => {
+        expect(identity(1)).to.equal(1)
+    })
+    test(orma.byo_query_fn.name, async () => {
+        const response = await orma.byo_query_fn([{ sql_string: '' }], {
+            query: () => ({ rows: [] })
+        })
+        expect(response.length).to.equal(1)
     })
     test('Create a user select created_at updated_at', async () => {
+        sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => [{}]))
         const user = {
-            id: { $guid: cuid() },
+            $operation: 'create',
             email: 'mendeljacks@gmail.com',
             password: 'password'
         }
+        const role = {
+            $operation: 'update',
+            id: 1,
+            name: 'admin2'
+        }
         const mutation = {
-            $operation: 'create',
-            users: [user]
+            users: [user],
+            roles: [role]
         }
 
-        await mutate_handler(mutation)
+        await orma.mutate_handler(mutation)
 
         const body = {
             users: {
@@ -87,38 +72,8 @@ describe('Crud Orma', () => {
             }
         }
 
-        const result: any = await query_handler(body)
-
-        expect(result.users[0].id).to.be.a('number')
-        expect(result?.users[0].created_at).to.be.a('string')
-        expect(result?.users[0].updated_at).to.be.a('string')
-    })
-    test('Create a user nested', async () => {
-        const user = {
-            // id: { $guid: cuid() },
-            email: 'mendeljacks@gmail.com',
-            password: 'password',
-            first_name: 'Mendel',
-            last_name: 'Jackson',
-            phone: '1234567890',
-            user_has_roles: [
-                {
-                    // id: { $guid: cuid() },
-                    roles: [
-                        {
-                            // id: { $guid: cuid() },
-                            name: 'admin'
-                        }
-                    ]
-                }
-            ]
-        }
-        const mutation = {
-            $operation: 'create',
-            users: [user]
-        }
-
-        const mutate_response = await mutate_handler(mutation)
-        expect(mutate_response.users.length).to.equal(1)
+        const result: any = await orma.query_handler(body)
+        sinon.restore()
+        expect(result.users.length).to.equal(1)
     })
 })
