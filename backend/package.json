@@ -4,11 +4,26 @@
     "description": "",
     "main": "build/index.js",
     "scripts": {
-        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start('development')\\\"\""
+        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start('development')\\\"\"",
+        "test": "nodemon --signal SIGKILL --exec mocha --package package.json",
+        "coverage": "nodemon --signal SIGKILL --exec nyc --reporter=lcov mocha --package package.json"
     },
     "nodemonConfig": {
         "signal": "SIGKILL",
         "ext": "ts, js, jsx, tsx"
+    },
+    "nyc": {
+        "include": "src"
+    },
+    "mocha": {
+        "require": [
+            "ts-node/register",
+            "dotenv/config"
+        ],
+        "spec": [
+            "src/**/*.test.ts"
+        ],
+        "timeout": 0
     },
     "author": "",
     "license": "ISC",
@@ -24,6 +39,12 @@
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
-        "dotenv": "^16.0.1"
+        "chai": "^4.3.6",
+        "db-migrate": "^0.11.13",
+        "db-migrate-pg": "^1.2.2",
+        "dotenv": "^16.0.1",
+        "mocha": "^10.0.0",
+        "nyc": "^15.1.0",
+        "sinon": "^14.0.0"
     }
 }
