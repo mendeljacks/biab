@@ -1,33 +1,33 @@
-import cors from 'cors'
-import express from 'express'
-import { handler } from 'express_phandler'
-import { mutate_handler, query_handler } from '../config/orma'
-import { pool } from '../config/pg'
-import { introspect } from '../scripts/introspect'
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
+import { introspect } from '../config/orma'
+import {
+    login_controller,
+    mutate_controller,
+    query_controller,
+    signup_controller
+} from './controllers'
+import { handler } from '..'
 
-const port = process.env.PORT || 3001
+const port = Number(process.env.PORT) || 3001
 
-export const start = async (env: string) => {
-    const app = express()
-    await introspect(env)
+export const start = async () => {
+    await introspect()
+    const app = Fastify({ logger: true, http2: true })
+    await app.register(cors)
 
-    app.use(cors())
-    app.use(express.json({ limit: '50mb' }))
-    app.use(express.urlencoded({ extended: true, limit: '50mb' }))
-
-    app.post(
-        '/query',
-        handler(async (req: Request) => {
-            const results = await query_handler(req.body)
-            return results
-        })
+    app.get(
+        '/',
+        handler(
+            async _ =>
+                'Welcome! Login at POST /login. Query at POST /query. Mutate at POST /mutate.'
+        )
     )
+    app.post('/signup', handler(signup_controller))
+    app.post('/login', handler(login_controller))
+    app.post('/query', handler(query_controller))
+    app.post('/mutate', handler(mutate_controller))
 
-    app.post(
-        '/mutate',
-        handler(async req => mutate_handler(req.body))
-    )
-
-    await new Promise(r => app.listen(port, r as any))
-    console.log('Listening at http://localhost:' + port)
+    await app.listen({ port })
+    console.log(`Server listening on ${port}`)
 }

@@ -4,8 +4,8 @@ types.setTypeParser(20, function (val) {
     return parseInt(val, 10)
 })
 
-types.setTypeParser(1084, date => date)
-types.setTypeParser(1114, date => date)
+export const identity = el => el
+types.setTypeParser(types.builtins.TIMESTAMP, identity)
 
 export const pool = new Pool({
     connectionString: process.env.pg,
@@ -14,9 +14,7 @@ export const pool = new Pool({
 })
 
 export const trans = async fn => {
-    const connection = await pool
-        .connect()
-        .catch(err => Promise.reject({ message: 'Could not start connection', err }))
+    const connection = await pool.connect()
     try {
         await connection.query('BEGIN')
         const res = await fn(connection)

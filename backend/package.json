@@ -4,25 +4,49 @@
     "description": "",
     "main": "build/index.js",
     "scripts": {
-        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start('development')\\\"\""
+        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start()\\\"\"",
+        "test": "nodemon --exec mocha --package package.json",
+        "coverage": "nodemon --exec nyc mocha --package package.json"
     },
     "nodemonConfig": {
         "signal": "SIGKILL",
-        "ext": "ts, js, jsx, tsx"
+        "ext": "ts, js, jsx, tsx, json"
+    },
+    "nyc": {
+        "reporter": [
+            "text",
+            "lcov"
+        ]
+    },
+    "mocha": {
+        "require": [
+            "ts-node/register",
+            "dotenv/config"
+        ],
+        "spec": [
+            "src/**/*.test.ts"
+        ],
+        "timeout": 0
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "cors": "^2.8.5",
+        "@fastify/cors": "^8.1.0",
+        "bcrypt": "^5.0.1",
         "cuid": "^2.1.8",
-        "express": "^4.18.1",
-        "express_phandler": "^1.0.7",
+        "fastify": "^4.4.0",
         "jsonwebtoken": "^8.5.1",
         "orma": "^1.0.118",
         "pg": "^8.7.3",
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
-        "dotenv": "^16.0.1"
+        "chai": "^4.3.6",
+        "db-migrate": "^0.11.13",
+        "db-migrate-pg": "^1.2.2",
+        "dotenv": "^16.0.1",
+        "mocha": "^10.0.0",
+        "nyc": "^15.1.0",
+        "sinon": "^14.0.0"
     }
 }

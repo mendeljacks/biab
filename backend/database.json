@@ -1,0 +1,10 @@
+{
+  "dev": {
+    "driver": "pg",
+    "url": { "ENV": "pg" },
+    "ssl": {
+      "rejectUnauthorized": false
+    },
+    "schema": "public"
+  }
+}
