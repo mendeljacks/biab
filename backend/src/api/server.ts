@@ -16,6 +16,10 @@ export const start = async () => {
     const app = Fastify()
     await app.register(cors)
 
+    app.get(
+        '/',
+        handler(_ => 'Welcome! Login at POST /login. Query at POST /query. Mutate at POST /mutate.')
+    )
     app.post('/signup', handler(signup_controller))
     app.post('/login', handler(login_controller))
     app.post('/query', handler(query_controller))
