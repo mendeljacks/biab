@@ -13,7 +13,7 @@ const port = Number(process.env.PORT) || 3001
 
 export const start = async () => {
     await introspect()
-    const app = Fastify({ logger: true, http2: true })
+    const app = Fastify({ logger: true })
     await app.register(cors)
 
     app.get(
@@ -28,6 +28,6 @@ export const start = async () => {
     app.post('/query', handler(query_controller))
     app.post('/mutate', handler(mutate_controller))
 
-    await app.listen({ port })
+    await app.listen({ port, host: '0.0.0.0' })
     console.log(`Server listening on ${port}`)
 }
