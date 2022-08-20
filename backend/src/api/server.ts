@@ -9,12 +9,15 @@ import {
     welcome_controller
 } from './controllers'
 import { handler } from '..'
+import { prepopulate } from '../scripts/prepopulate'
 
 const port = Number(process.env.PORT) || 3001
 
 export const start = async () => {
     await introspect()
-    const app = Fastify({ logger: true })
+    await prepopulate()
+
+    const app = Fastify()
     await app.register(cors)
 
     app.get('/', handler(welcome_controller))

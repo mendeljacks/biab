@@ -88,6 +88,14 @@ export const orma_schema = {
     },
     "$indexes": [
       {
+        "index_name": "users_phone_uq",
+        "is_unique": true,
+        "fields": [
+          "phone"
+        ],
+        "invisible": false
+      },
+      {
         "index_name": "users_resource_id_uq",
         "is_unique": true,
         "fields": [
@@ -108,14 +116,6 @@ export const orma_schema = {
         "is_unique": true,
         "fields": [
           "email"
-        ],
-        "invisible": false
-      },
-      {
-        "index_name": "users_phone_uq",
-        "is_unique": true,
-        "fields": [
-          "phone"
         ],
         "invisible": false
       }
@@ -236,6 +236,15 @@ export const orma_schema = {
     },
     "$indexes": [
       {
+        "index_name": "user_has_roles_user_id_role_id_uq",
+        "is_unique": true,
+        "fields": [
+          "role_id",
+          "user_id"
+        ],
+        "invisible": false
+      },
+      {
         "index_name": "user_has_roles_resource_id_uq",
         "is_unique": true,
         "fields": [
@@ -248,15 +257,6 @@ export const orma_schema = {
         "is_unique": true,
         "fields": [
           "id"
-        ],
-        "invisible": false
-      },
-      {
-        "index_name": "user_has_roles_user_id_role_id_uq",
-        "is_unique": true,
-        "fields": [
-          "role_id",
-          "user_id"
         ],
         "invisible": false
       }
@@ -465,14 +465,6 @@ export const orma_schema = {
     },
     "$indexes": [
       {
-        "index_name": "photos_pkey",
-        "is_unique": true,
-        "fields": [
-          "id"
-        ],
-        "invisible": false
-      },
-      {
         "index_name": "photos_url_uq",
         "is_unique": true,
         "fields": [
@@ -485,6 +477,14 @@ export const orma_schema = {
         "is_unique": true,
         "fields": [
           "resource_id"
+        ],
+        "invisible": false
+      },
+      {
+        "index_name": "photos_pkey",
+        "is_unique": true,
+        "fields": [
+          "id"
         ],
         "invisible": false
       }

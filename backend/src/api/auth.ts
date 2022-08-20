@@ -3,21 +3,41 @@ import jwt from 'jsonwebtoken'
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { query_for_each } from 'orma/src/query/query_helpers'
 import { mutate_handler, query_handler } from '../config/orma'
+import { populated_data } from '../scripts/prepopulate'
 
-const roles = [
-    { id: 1, name: 'admin' },
-    { id: 2, name: 'user' }
-]
+const admin = populated_data.roles[0].id
+const user = populated_data.roles[0].id
+
 const role_has_perms = {
-    club_has_users: { create: [1], read: [1], update: [1], delete: [1] },
-    clubs: { create: [1], read: [1], update: [1], delete: [1] },
-    review_has_photos: { create: [1], read: [1], update: [1], delete: [1] },
-    photos: { create: [1], read: [1], update: [1], delete: [1] },
-    reviews: { create: [1], read: [1], update: [1], delete: [1] },
-    places: { create: [1], read: [1], update: [1], delete: [1] },
-    user_has_roles: { create: [1], read: [1], update: [1], delete: [1] },
-    roles: { create: [1], read: [1], update: [1], delete: [1] },
-    users: { create: [1], read: [1], update: [1], delete: [1] }
+    club_has_users: {
+        create: [admin, user],
+        read: [admin, user],
+        update: [admin, user],
+        delete: [admin, user]
+    },
+    clubs: {
+        create: [admin, user],
+        read: [admin, user],
+        update: [admin, user],
+        delete: [admin, user]
+    },
+    review_has_photos: {
+        create: [admin, user],
+        read: [admin, user],
+        update: [admin, user],
+        delete: [admin, user]
+    },
+    photos: { create: [admin, user], read: [admin, user], update: [], delete: [admin, user] },
+    reviews: { create: [admin, user], read: [admin, user], update: [admin, user], delete: [admin] },
+    places: { create: [admin], read: [admin, user], update: [admin], delete: [admin] },
+    user_has_roles: {
+        create: [admin],
+        read: [admin],
+        update: [admin],
+        delete: [admin]
+    },
+    roles: { create: [admin], read: [admin], update: [admin], delete: [admin] },
+    users: { create: [admin], read: [admin, user], update: [admin, user], delete: [admin, user] }
 }
 
 type TokenContent = {

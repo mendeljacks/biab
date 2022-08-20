@@ -8,6 +8,7 @@ import { orma_schema } from '../../../common/orma_schema'
 import * as orma from '../config/orma'
 import * as orma_original from 'orma'
 import { identity, pool } from '../config/pg'
+import { populated_data, prepopulate } from '../scripts/prepopulate'
 
 describe('Crud Orma', () => {
     test('Introspection', async () => {
@@ -39,6 +40,28 @@ describe('Crud Orma', () => {
             query: () => ({ rows: [] })
         })
         expect(response.length).to.equal(1)
+    })
+    test(prepopulate.name, async () => {
+        // in this case there will be nothing todo
+        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
+            return { roles: populated_data.roles }
+        })
+        sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
+            return {}
+        })
+        await prepopulate()
+        sinon.restore()
+    })
+    test(prepopulate.name, async () => {
+        // in this case it will try to create two rows
+        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
+            return { roles: [] }
+        })
+        sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
+            return {}
+        })
+        await prepopulate()
+        sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
         sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => [{}]))
