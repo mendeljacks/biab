@@ -6,7 +6,8 @@ import {
     login_controller,
     mutate_controller,
     query_controller,
-    signup_controller
+    signup_controller,
+    welcome_controller
 } from '../api/controllers'
 import * as orma from '../config/orma'
 
@@ -182,5 +183,9 @@ describe('Auth', () => {
         }
 
         sinon.restore()
+    })
+    test('Welcome', async () => {
+        const result = await welcome_controller({})
+        expect(result.length > 0).to.deep.equal(true)
     })
 })
