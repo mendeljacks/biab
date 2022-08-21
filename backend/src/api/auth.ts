@@ -5,42 +5,32 @@ import { query_for_each } from 'orma/src/query/query_helpers'
 import { mutate_handler, query_handler } from '../config/orma'
 import { populated_data } from '../scripts/prepopulate'
 
-const admin = populated_data.roles[0].id
-const user = populated_data.roles[0].id
+export const admin = populated_data.roles[0].id
+export const user = populated_data.roles[1].id
 
+const everyone = [admin, user]
+const admin_only = [admin]
+const disabled = []
 const role_has_perms = {
-    club_has_users: {
-        create: [admin, user],
-        read: [admin, user],
-        update: [admin, user],
-        delete: [admin, user]
-    },
-    clubs: {
-        create: [admin, user],
-        read: [admin, user],
-        update: [admin, user],
-        delete: [admin, user]
-    },
-    review_has_photos: {
-        create: [admin, user],
-        read: [admin, user],
-        update: [admin, user],
-        delete: [admin, user]
-    },
-    photos: { create: [admin, user], read: [admin, user], update: [], delete: [admin, user] },
-    reviews: { create: [admin, user], read: [admin, user], update: [admin, user], delete: [admin] },
-    places: { create: [admin], read: [admin, user], update: [admin], delete: [admin] },
+    migrations: { create: disabled, read: disabled, update: disabled, delete: disabled },
+    club_has_users: { create: everyone, read: everyone, update: everyone, delete: everyone },
+    clubs: { create: everyone, read: everyone, update: everyone, delete: everyone },
+    review_has_photos: { create: everyone, read: everyone, update: everyone, delete: everyone },
+    photos: { create: everyone, read: everyone, update: disabled, delete: everyone },
+    reviews: { create: everyone, read: everyone, update: everyone, delete: admin_only },
+    places: { create: admin_only, read: everyone, update: admin_only, delete: admin_only },
     user_has_roles: {
-        create: [admin],
-        read: [admin],
-        update: [admin],
-        delete: [admin]
+        create: admin_only,
+        read: admin_only,
+        update: admin_only,
+        delete: admin_only
     },
-    roles: { create: [admin], read: [admin], update: [admin], delete: [admin] },
-    users: { create: [admin], read: [admin, user], update: [admin, user], delete: [admin, user] }
+    roles: { create: admin_only, read: admin_only, update: admin_only, delete: admin_only },
+    users: { create: admin_only, read: everyone, update: everyone, delete: everyone }
 }
 
-type TokenContent = {
+export type TokenContent = {
+    user_id: number
     role_ids: number[]
 }
 
@@ -76,17 +66,22 @@ export const login_user = async (email: string, password: string) => {
     }
 
     const token = await make_token(
-        users[0].user_has_roles?.map(({ role_id }) => role_id),
+        users[0].id,
+        users[0].user_has_roles?.map(({ role_id }) => role_id) || [],
         process.env.jwt_secret
     )
 
     return { token, user_id: users[0].id }
 }
 
-export const make_token = async (role_ids, secret): Promise<string> => {
+export const make_token = async (
+    user_id: number,
+    role_ids: number[],
+    secret: string
+): Promise<string> => {
     return new Promise((resolve, reject) => {
         jwt.sign(
-            { role_ids } as TokenContent,
+            { user_id, role_ids } as TokenContent,
             secret,
             /*{expiresIn: 60},*/ (err, token) => {
                 if (err) {
@@ -126,18 +121,22 @@ export const authenticate = async (req, jwt_secret): Promise<TokenContent> => {
 
     // Verify the token
     return new Promise((resolve, reject) => {
-        jwt.verify(token, jwt_secret, async (err, tokenContent: TokenContent) => {
+        jwt.verify(token, jwt_secret, async (err, token_content: TokenContent) => {
             if (err) {
                 return reject({ message: 'Invalid login credentials. Please sign in again.' })
             } else {
-                return resolve(tokenContent as TokenContent)
+                return resolve(token_content)
             }
         })
     })
 }
 
-export const ensure_perms = async (query, tokenContent: TokenContent, mode: 'query' | 'mutate') => {
-    const { role_ids } = tokenContent
+export const ensure_perms = async (
+    query,
+    token_content: TokenContent,
+    mode: 'query' | 'mutate'
+) => {
+    const { user_id, role_ids } = token_content
     let needed_perms = {}
     const deep_for_each = mode === 'query' ? query_for_each : mutation_entity_deep_for_each
     deep_for_each(query, (value, path, entity_name) => {
@@ -148,7 +147,7 @@ export const ensure_perms = async (query, tokenContent: TokenContent, mode: 'que
     const table_names = Object.keys(needed_perms)
     const missing_perms = table_names.reduce((acc: string[], table_name: string) => {
         const operation = Object.keys(needed_perms[table_name])
-        if (!role_has_perms[table_name][operation].some(role_id => role_ids?.includes(role_id))) {
+        if (!role_has_perms[table_name][operation].some(role_id => role_ids.includes(role_id))) {
             acc.push(table_name)
         }
         return acc

@@ -543,15 +543,6 @@ export const orma_schema = {
     },
     "$indexes": [
       {
-        "index_name": "review_has_photos_review_id_photo_id_uq",
-        "is_unique": true,
-        "fields": [
-          "photo_id",
-          "review_id"
-        ],
-        "invisible": false
-      },
-      {
         "index_name": "review_has_photos_resource_id_uq",
         "is_unique": true,
         "fields": [
@@ -564,6 +555,15 @@ export const orma_schema = {
         "is_unique": true,
         "fields": [
           "id"
+        ],
+        "invisible": false
+      },
+      {
+        "index_name": "review_has_photos_review_id_photo_id_uq",
+        "is_unique": true,
+        "fields": [
+          "photo_id",
+          "review_id"
         ],
         "invisible": false
       }
@@ -700,15 +700,6 @@ export const orma_schema = {
     },
     "$indexes": [
       {
-        "index_name": "club_has_users_club_id_user_id_uq",
-        "is_unique": true,
-        "fields": [
-          "user_id",
-          "club_id"
-        ],
-        "invisible": false
-      },
-      {
         "index_name": "club_has_users_resource_id_uq",
         "is_unique": true,
         "fields": [
@@ -721,6 +712,15 @@ export const orma_schema = {
         "is_unique": true,
         "fields": [
           "id"
+        ],
+        "invisible": false
+      },
+      {
+        "index_name": "club_has_users_club_id_user_id_uq",
+        "is_unique": true,
+        "fields": [
+          "user_id",
+          "club_id"
         ],
         "invisible": false
       }

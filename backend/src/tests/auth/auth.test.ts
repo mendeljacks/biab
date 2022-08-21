@@ -1,20 +1,20 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import sinon from 'sinon'
-import { authenticate, ensure_perms, make_token } from '../api/auth'
+import { authenticate, ensure_perms, make_token } from '../../api/auth'
 import {
     login_controller,
     mutate_controller,
     query_controller,
     signup_controller,
     welcome_controller
-} from '../api/controllers'
-import * as orma from '../config/orma'
+} from '../../api/controllers'
+import * as orma from '../../config/orma'
 
 describe('Auth', () => {
     test('Requires jwt to user query/mutate', async () => {
-        const admin_token = await make_token([1], process.env.jwt_secret)
-        const user_token = await make_token([2], process.env.jwt_secret)
+        const admin_token = await make_token(1, [1], process.env.jwt_secret)
+        const user_token = await make_token(1, [2], process.env.jwt_secret)
         const t1 = await query_controller({
             body: {},
             headers: { authorization: `Bearer ${admin_token}` }
@@ -45,7 +45,7 @@ describe('Auth', () => {
     })
     test('make token can reject', async () => {
         try {
-            await make_token([2], undefined)
+            await make_token(1, [2], undefined)
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.equal(true)
@@ -63,7 +63,7 @@ describe('Auth', () => {
         try {
             await ensure_perms(
                 { users: { id: true, user_has_roles: { id: true, users: { id: true } } } },
-                { role_ids: [1] },
+                { user_id: 1, role_ids: [1] },
                 'query'
             )
             expect(true).to.equal(false)
@@ -71,14 +71,14 @@ describe('Auth', () => {
             expect(error.message.length > 0).to.deep.equal(true)
         }
         try {
-            await ensure_perms({ users: { id: true } }, { role_ids: [2] }, 'query')
+            await ensure_perms({ users: { id: true } }, { user_id: 1, role_ids: [2] }, 'query')
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.deep.equal(true)
         }
 
         try {
-            await ensure_perms({ users: { id: true } }, { role_ids: [2] }, 'mutate')
+            await ensure_perms({ users: { id: true } }, { user_id: 1, role_ids: [2] }, 'mutate')
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.deep.equal(true)

@@ -5,7 +5,8 @@
     "main": "build/index.js",
     "scripts": {
         "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start()\\\"\"",
-        "test": "nodemon --exec mocha --package package.json",
+        "test": "mocha --package package.json",
+        "nt": "nodemon --exec npm run test",
         "coverage": "nodemon --exec nyc mocha --package package.json"
     },
     "nodemonConfig": {
@@ -14,8 +15,7 @@
     },
     "nyc": {
         "reporter": [
-            "text",
-            "lcov"
+            "html"
         ]
     },
     "mocha": {
@@ -36,7 +36,7 @@
         "cuid": "^2.1.8",
         "fastify": "^4.4.0",
         "jsonwebtoken": "^8.5.1",
-        "orma": "^1.0.135",
+        "orma": "^1.0.136",
         "pg": "^8.7.3",
         "ts-node": "^10.9.1"
     },
