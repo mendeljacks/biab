@@ -4,10 +4,12 @@
     "description": "",
     "main": "build/index.js",
     "scripts": {
+        "start": "node -r ts-node/register -e \"require('./src/api/server.ts').start()\"",
         "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start()\\\"\"",
         "test": "mocha --package package.json",
         "nt": "nodemon --exec npm run test",
-        "coverage": "nodemon --exec nyc mocha --package package.json"
+        "coverage": "nodemon --exec nyc mocha --package package.json",
+        "deploy": "node -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\""
     },
     "nodemonConfig": {
         "signal": "SIGKILL",
@@ -45,6 +47,7 @@
         "db-migrate": "^0.11.13",
         "db-migrate-pg": "^1.2.2",
         "dotenv": "^16.0.1",
+        "git-rev-sync": "^3.0.2",
         "mocha": "^10.0.0",
         "nyc": "^15.1.0",
         "sinon": "^14.0.0"
