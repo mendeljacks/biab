@@ -1,6 +1,7 @@
 import { mutate_handler, query_handler } from '../config/orma'
-import { authenticate, ensure_perms, login_user, signup_user } from './auth'
+import { authenticate, login_user, signup_user } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
+import { ensure_perms } from './auth/perms'
 
 export const welcome = async _ => 'Welcome!'
 

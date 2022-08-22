@@ -1,6 +1,7 @@
 import { describe, test } from 'mocha'
 import { expect } from 'chai'
-import { admin, ensure_perms, user } from '../../api/auth'
+import { admin, user } from '../../api/auth/roles'
+import { ensure_perms } from '../../api/auth/perms'
 
 describe('Table perms', () => {
     test(ensure_perms.name, async () => {

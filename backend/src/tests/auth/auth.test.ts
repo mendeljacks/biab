@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import sinon from 'sinon'
-import { authenticate, ensure_perms, make_token } from '../../api/auth'
+import { authenticate, make_token } from '../../api/auth/auth'
+import { ensure_perms } from '../../api/auth/perms'
 import { login, mutate, query, signup, welcome } from '../../api/controllers'
 import * as orma from '../../config/orma'
 

@@ -3,10 +3,10 @@ import { describe, test } from 'mocha'
 import { array_equals, clone } from 'orma/src/helpers/helpers'
 import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { WhereConnected } from 'orma/src/types/query/query_types'
-import { admin, user } from '../../api/auth'
 import * as orma from '../../config/orma'
 import sinon from 'sinon'
 import { ensure_ownership } from '../../api/auth/ownership'
+import { admin, user } from '../../api/auth/roles'
 
 describe('Ownership', () => {
     test(array_equals.name, () => {

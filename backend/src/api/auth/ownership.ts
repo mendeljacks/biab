@@ -5,8 +5,9 @@ import { get_mutation_connected_errors } from 'orma/src/mutate/verifications/mut
 import { WhereConnected } from 'orma/src/types/query/query_types'
 import { orma_schema } from '../../../../common/orma_schema'
 import { byo_query_fn } from '../../config/orma'
-import { admin, TokenContent } from '../auth'
+import { TokenContent } from './auth'
 import { connection_edges } from './connection_edges'
+import { admin } from './roles'
 
 export const ensure_ownership = async (
     query,
