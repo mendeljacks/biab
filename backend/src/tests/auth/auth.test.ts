@@ -2,24 +2,18 @@ import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import sinon from 'sinon'
 import { authenticate, ensure_perms, make_token } from '../../api/auth'
-import {
-    login_controller,
-    mutate_controller,
-    query_controller,
-    signup_controller,
-    welcome_controller
-} from '../../api/controllers'
+import { login, mutate, query, signup, welcome } from '../../api/controllers'
 import * as orma from '../../config/orma'
 
 describe('Auth', () => {
     test('Requires jwt to user query/mutate', async () => {
         const admin_token = await make_token(1, [1], process.env.jwt_secret)
         const user_token = await make_token(1, [2], process.env.jwt_secret)
-        const t1 = await query_controller({
+        const t1 = await query({
             body: {},
             headers: { authorization: `Bearer ${admin_token}` }
         })
-        const t2 = await mutate_controller({
+        const t2 = await mutate({
             body: {},
             headers: { authorization: `Bearer ${user_token}` }
         })
@@ -30,12 +24,12 @@ describe('Auth', () => {
         let err = undefined
         let err2 = undefined
         try {
-            const t1 = await query_controller({})
+            const t1 = await query({})
         } catch (error) {
             err = error
         }
         try {
-            const t2 = await mutate_controller({ body: {} })
+            const t2 = await mutate({ body: {} })
         } catch (error) {
             err2 = error
         }
@@ -86,7 +80,7 @@ describe('Auth', () => {
     })
     test('Signup Controller', async () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async _ => 'called')
-        const response = await signup_controller({ body: { email: 'admin', password: 'admin' } })
+        const response = await signup({ body: { email: 'admin', password: 'admin' } })
         sinon.restore()
         expect(response).to.deep.equal('called')
     })
@@ -96,12 +90,12 @@ describe('Auth', () => {
             const user_has_roles = [{ role_id: 1 }]
             return { users: [{ id: 1, email: 'admin', password, user_has_roles }] }
         })
-        const response = await login_controller({ body: { email: 'admin', password: 'admin' } })
+        const response = await login({ body: { email: 'admin', password: 'admin' } })
 
         expect(response.token.length > 0).to.deep.equal(true)
 
         try {
-            await login_controller({
+            await login({
                 body: { email: undefined, password: 'admin' }
             })
             expect(false).to.deep.equal(true)
@@ -110,7 +104,7 @@ describe('Auth', () => {
         }
 
         try {
-            await login_controller({
+            await login({
                 body: { email: 'admin', password: undefined }
             })
             expect(false).to.deep.equal(true)
@@ -126,7 +120,7 @@ describe('Auth', () => {
 
             return { users: [{ id: 1, email: 'admin', password }] }
         })
-        const response = await login_controller({ body: { email: 'admin', password: 'admin' } })
+        const response = await login({ body: { email: 'admin', password: 'admin' } })
 
         expect(response.token.length > 0).to.deep.equal(true)
 
@@ -138,7 +132,7 @@ describe('Auth', () => {
         })
 
         try {
-            await login_controller({ body: { email: 'oops', password: 'admin' } })
+            await login({ body: { email: 'oops', password: 'admin' } })
             expect(true).to.deep.equal(false)
         } catch (error) {
             expect(error.length > 0).to.deep.equal(true)
@@ -152,7 +146,7 @@ describe('Auth', () => {
         })
 
         try {
-            await login_controller({ body: { email: 'oops', password: 'admin' } })
+            await login({ body: { email: 'oops', password: 'admin' } })
             expect(true).to.deep.equal(false)
         } catch (error) {
             expect(error.length > 0).to.deep.equal(true)
@@ -164,7 +158,7 @@ describe('Auth', () => {
         sinon.stub(orma, 'mutate_handler')
 
         try {
-            await signup_controller({ body: { email: undefined, password: 'admin' } })
+            await signup({ body: { email: undefined, password: 'admin' } })
             expect(true).to.deep.equal(false)
         } catch (error) {
             expect(error.length > 0).to.deep.equal(true)
@@ -176,7 +170,7 @@ describe('Auth', () => {
         sinon.stub(orma, 'mutate_handler')
 
         try {
-            await signup_controller({ body: { email: 'oops', password: undefined } })
+            await signup({ body: { email: 'oops', password: undefined } })
             expect(true).to.deep.equal(false)
         } catch (error) {
             expect(error.length > 0).to.deep.equal(true)
@@ -185,7 +179,7 @@ describe('Auth', () => {
         sinon.restore()
     })
     test('Welcome', async () => {
-        const result = await welcome_controller({})
+        const result = await welcome({})
         expect(result.length > 0).to.deep.equal(true)
     })
 })
