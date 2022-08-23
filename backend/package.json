@@ -9,7 +9,7 @@
         "test": "mocha --package package.json",
         "nt": "nodemon --exec npm run test",
         "coverage": "nodemon --exec nyc mocha --package package.json",
-        "deploy": "node -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
+        "deploy": "node -r dotenv/config -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
         "reset": "node -r dotenv/config -r ts-node/register -e \"require('./src/scripts/reset.ts').reset()\""
     },
     "nodemonConfig": {
