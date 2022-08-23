@@ -20,5 +20,6 @@ export const start = async () => {
 
     const port = Number(process.env.PORT) || 3001
     await app.listen({ port, host: '0.0.0.0' })
+    console.clear()
     console.log(`🟢 Server running on port ${port}`)
 }
