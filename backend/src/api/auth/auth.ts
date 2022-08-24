@@ -1,6 +1,4 @@
-import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { mutate_handler, query_handler } from '../../config/orma'
 
 export type TokenContent = {
     user_id: number
