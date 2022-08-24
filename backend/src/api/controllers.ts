@@ -3,7 +3,10 @@ import { authenticate, login_user, signup_user } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
 import { ensure_perms } from './auth/perms'
 
-export const welcome = async _ => 'Welcome!'
+export const welcome = async req => {
+    await req.jwtVerify()
+    return 'Welcome!'
+}
 
 export const signup = req => signup_user(req.body.email, req.body.password)
 
