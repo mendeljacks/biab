@@ -20,6 +20,6 @@ export const role_has_perms = {
         update: admin_only,
         delete: admin_only
     },
-    roles: { create: admin_only, read: admin_only, update: admin_only, delete: admin_only },
+    roles: { create: admin_only, read: everyone, update: admin_only, delete: admin_only },
     users: { create: admin_only, read: everyone, update: everyone, delete: everyone }
 }

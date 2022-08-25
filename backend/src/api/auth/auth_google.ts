@@ -3,6 +3,7 @@ import querystring from 'querystring'
 import { mutate_handler, query_handler } from '../../config/orma'
 import { make_token } from './auth'
 import Ajv from 'ajv/dist/2020'
+import { user } from './roles'
 
 const redirectURI = 'auth/google/callback'
 
@@ -19,6 +20,47 @@ type GoogleUser = {
     picture: string
     locale: string
     iat: number
+}
+
+const ensure_user_exists = async (google_user: GoogleUser) => {
+    const query = {
+        users: {
+            id: true,
+            email: true,
+            password: true,
+            user_has_roles: {
+                role_id: true
+            },
+            $where: {
+                $eq: ['email', { $escape: google_user.email }]
+            }
+        }
+    }
+
+    let { users } = (await query_handler(query)) as any
+
+    if (users.length > 0) {
+        return users[0]
+    }
+
+    const mutation = {
+        $operation: 'create',
+        users: [
+            {
+                email: google_user.email,
+                password: google_user.id,
+                user_has_roles: [
+                    {
+                        role_id: user
+                    }
+                ]
+            }
+        ]
+    }
+
+    await mutate_handler(mutation)
+    let { users: new_users } = await query_handler(query)
+    return new_users[0]
 }
 
 export const access_token_to_jwt = async (id_token: string, access_token: string) => {
@@ -38,43 +80,15 @@ export const access_token_to_jwt = async (id_token: string, access_token: string
             throw new Error(error.message)
         })
 
-    const query = {
-        users: {
-            id: true,
-            email: true,
-            password: true,
-            user_has_roles: {
-                role_id: true
-            },
-            $where: {
-                $eq: ['email', { $escape: google_user.email }]
-            }
-        }
-    }
-
-    const { users } = (await query_handler(query)) as any
-
-    if (users.length === 0) {
-        const mutation = {
-            $operation: 'create',
-            users: [
-                {
-                    email: google_user.email,
-                    password: google_user.id
-                }
-            ]
-        }
-
-        await mutate_handler(mutation)
-    }
+    const user = await ensure_user_exists(google_user)
 
     const token = await make_token(
-        users[0].id,
-        users[0].user_has_roles?.map(({ role_id }) => role_id) || [],
+        user.id,
+        user.user_has_roles?.map(({ role_id }) => role_id) || [],
         process.env.jwt_secret
     )
 
-    return { token, user_id: users[0].id }
+    return { token, user_id: user.id }
 }
 
 const google_auth_headless_schema = {
