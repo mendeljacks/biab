@@ -8,9 +8,10 @@ import { user } from './roles'
 const redirectURI = 'auth/google/callback'
 
 export const google_login = async (req, res) => {
-    res.redirect(getGoogleAuthURL())
+    res.redirect(get_google_auth_url(process.env.SERVER_ROOT_URI))
 }
-type GoogleUser = {
+
+export type GoogleUser = {
     id: string
     email: string
     verified_email: boolean
@@ -22,7 +23,7 @@ type GoogleUser = {
     iat: number
 }
 
-const ensure_user_exists = async (google_user: GoogleUser) => {
+export const ensure_user_exists = async (google_user: GoogleUser) => {
     const query = {
         users: {
             id: true,
@@ -49,6 +50,8 @@ const ensure_user_exists = async (google_user: GoogleUser) => {
             {
                 email: google_user.email,
                 password: google_user.id,
+                first_name: google_user.given_name,
+                last_name: google_user.family_name,
                 user_has_roles: [
                     {
                         role_id: user
@@ -68,17 +71,9 @@ export const access_token_to_jwt = async (id_token: string, access_token: string
     const google_user: GoogleUser = await axios
         .get(
             `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${id_token}`
-                }
-            }
+            { headers: { Authorization: `Bearer ${id_token}` } }
         )
         .then(res => res.data)
-        .catch(error => {
-            console.error(`Failed to fetch user`)
-            throw new Error(error.message)
-        })
 
     const user = await ensure_user_exists(google_user)
 
@@ -110,8 +105,8 @@ const validate = ajv.compile(google_auth_headless_schema)
 export const google_auth_headless = async (req, res) => {
     validate(req.body)
 
-    if ((validate?.errors?.length || 0) > 0) {
-        return Promise.reject({ errors: validate?.errors })
+    if ((validate.errors?.length || 0) > 0) {
+        return Promise.reject({ errors: validate.errors })
     }
 
     return access_token_to_jwt(req.body.id_token, req.body.access_token)
@@ -120,7 +115,7 @@ export const google_auth_headless = async (req, res) => {
 export const google_login_callback = async (req, res) => {
     const code = req.query.code as string
 
-    const { id_token, access_token } = await getTokens({
+    const { id_token, access_token } = await get_tokens({
         code,
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -130,10 +125,10 @@ export const google_login_callback = async (req, res) => {
     return access_token_to_jwt(id_token, access_token)
 }
 
-function getGoogleAuthURL() {
+const get_google_auth_url = (server_root_uri: string) => {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
     const options = {
-        redirect_uri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
+        redirect_uri: `${server_root_uri}/${redirectURI}`,
         client_id: process.env.GOOGLE_CLIENT_ID,
         access_type: 'offline',
         response_type: 'code',
@@ -147,7 +142,7 @@ function getGoogleAuthURL() {
     return `${rootUrl}?${querystring.stringify(options)}`
 }
 
-function getTokens({
+const get_tokens = async ({
     code,
     clientId,
     clientSecret,
@@ -157,13 +152,7 @@ function getTokens({
     clientId: string
     clientSecret: string
     redirectUri: string
-}): Promise<{
-    access_token: string
-    expires_in: Number
-    refresh_token: string
-    scope: string
-    id_token: string
-}> {
+}) => {
     /*
      * Uses the code to get tokens
      * that can be used to fetch the user's profile
@@ -177,15 +166,16 @@ function getTokens({
         grant_type: 'authorization_code'
     }
 
-    return axios
-        .post(url, querystring.stringify(values), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
-        .then(res => res.data)
-        .catch(error => {
-            console.error(`Failed to fetch auth tokens`)
-            throw new Error(error.message)
-        })
+    const { data } = await axios.post(url, querystring.stringify(values), {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    return data as {
+        access_token: string
+        expires_in: Number
+        refresh_token: string
+        scope: string
+        id_token: string
+    }
 }
