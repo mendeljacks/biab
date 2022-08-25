@@ -3,7 +3,7 @@ import { describe, test } from 'mocha'
 import sinon from 'sinon'
 import { authenticate, make_token } from '../../api/auth/auth'
 import { ensure_perms } from '../../api/auth/perms'
-import { login, mutate, query, signup, welcome } from '../../api/controllers'
+import { mutate, query, welcome } from '../../api/controllers'
 import * as orma from '../../config/orma'
 
 describe('Auth', () => {
@@ -79,106 +79,7 @@ describe('Auth', () => {
             expect(error.message.length > 0).to.deep.equal(true)
         }
     })
-    test('Signup Controller', async () => {
-        sinon.stub(orma, 'mutate_handler').callsFake(async _ => 'called')
-        const response = await signup({ body: { email: 'admin', password: 'admin' } })
-        sinon.restore()
-        expect(response).to.deep.equal('called')
-    })
-    test('Login Controller', async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
-            const password = '$2b$10$iOxhCB/x0Ep.LVvvJJLFJuCrBZfiSxE0srGVAkB9IPz4sgSNzi.P.'
-            const user_has_roles = [{ role_id: 1 }]
-            return { users: [{ id: 1, email: 'admin', password, user_has_roles }] }
-        })
-        const response = await login({ body: { email: 'admin', password: 'admin' } })
 
-        expect(response.token.length > 0).to.deep.equal(true)
-
-        try {
-            await login({
-                body: { email: undefined, password: 'admin' }
-            })
-            expect(false).to.deep.equal(true)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        try {
-            await login({
-                body: { email: 'admin', password: undefined }
-            })
-            expect(false).to.deep.equal(true)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        sinon.restore()
-    })
-    test('Can make token for user with no roles', async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
-            const password = '$2b$10$iOxhCB/x0Ep.LVvvJJLFJuCrBZfiSxE0srGVAkB9IPz4sgSNzi.P.'
-
-            return { users: [{ id: 1, email: 'admin', password }] }
-        })
-        const response = await login({ body: { email: 'admin', password: 'admin' } })
-
-        expect(response.token.length > 0).to.deep.equal(true)
-
-        sinon.restore()
-    })
-    test('Login user throws error with bad email', async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
-            return { users: [] }
-        })
-
-        try {
-            await login({ body: { email: 'oops', password: 'admin' } })
-            expect(true).to.deep.equal(false)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        sinon.restore()
-    })
-    test('Login user throws error with bad password', async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
-            return { users: [{ password: '' }] }
-        })
-
-        try {
-            await login({ body: { email: 'oops', password: 'admin' } })
-            expect(true).to.deep.equal(false)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        sinon.restore()
-    })
-    test('Signup user throws error with bad email', async () => {
-        sinon.stub(orma, 'mutate_handler')
-
-        try {
-            await signup({ body: { email: undefined, password: 'admin' } })
-            expect(true).to.deep.equal(false)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        sinon.restore()
-    })
-    test('Signup user throws error with bad password', async () => {
-        sinon.stub(orma, 'mutate_handler')
-
-        try {
-            await signup({ body: { email: 'oops', password: undefined } })
-            expect(true).to.deep.equal(false)
-        } catch (error) {
-            expect(error.length > 0).to.deep.equal(true)
-        }
-
-        sinon.restore()
-    })
     test('Welcome', async () => {
         const result = await welcome({})
         expect(result.length > 0).to.deep.equal(true)

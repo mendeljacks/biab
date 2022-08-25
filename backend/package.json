@@ -35,12 +35,14 @@
     "license": "ISC",
     "dependencies": {
         "@fastify/cors": "^8.1.0",
+        "ajv": "^8.11.0",
+        "axios": "^0.27.2",
         "bcrypt": "^5.0.1",
         "cuid": "^2.1.8",
         "fastify": "^4.4.0",
         "jsonwebtoken": "^8.5.1",
         "next-auth": "^4.10.3",
-        "orma": "^1.0.136",
+        "orma": "^1.0.137",
         "pg": "^8.7.3",
         "ts-node": "^10.9.1"
     },

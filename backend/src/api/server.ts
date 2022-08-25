@@ -1,9 +1,10 @@
-import Fastify from 'fastify'
 import cors from '@fastify/cors'
-import { introspect } from '../config/orma'
-import { login, mutate, query, signup, welcome } from './controllers'
+import Fastify from 'fastify'
 import { handler } from '..'
+import { introspect } from '../config/orma'
 import { prepopulate } from '../scripts/prepopulate'
+import { google_login_callback, google_login, google_auth_headless } from './auth/auth_google'
+import { mutate, query, welcome } from './controllers'
 
 export const start = async () => {
     await introspect()
@@ -13,8 +14,9 @@ export const start = async () => {
     await app.register(cors)
 
     app.get('/', handler(welcome))
-    app.post('/signup', handler(signup))
-    app.post('/login', handler(login))
+    app.get('/auth/google/login', handler(google_login))
+    app.get('/auth/google/callback', handler(google_login_callback))
+    app.post('/auth/google/headless', handler(google_auth_headless))
     app.post('/query', handler(query))
     app.post('/mutate', handler(mutate))
 
