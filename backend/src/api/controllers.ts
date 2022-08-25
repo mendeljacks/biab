@@ -2,10 +2,8 @@ import { mutate_handler, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
 import { ensure_perms } from './auth/perms'
-import git from 'git-rev-sync'
 
-export const welcome = async _ =>
-    `Welcome to clubs app ${git.short()}. You can login at /auth/google/login`
+export const welcome = async _ => `Welcome to clubs app.`
 
 export const query = async req => {
     const token_content = await authenticate(req, process.env.jwt_secret)
