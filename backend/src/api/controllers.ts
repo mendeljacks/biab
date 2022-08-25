@@ -3,7 +3,7 @@ import { authenticate } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
 import { ensure_perms } from './auth/perms'
 
-export const welcome = async _ => `Welcome to clubs app.`
+export const welcome = async _ => `Welcome to clubs app. ${process.env.SERVER_ROOT_URI}`
 
 export const query = async req => {
     const token_content = await authenticate(req, process.env.jwt_secret)
