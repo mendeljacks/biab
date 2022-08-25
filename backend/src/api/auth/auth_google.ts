@@ -2,9 +2,9 @@ import axios from 'axios'
 import querystring from 'querystring'
 import { mutate_handler, query_handler } from '../../config/orma'
 import { make_token } from './auth'
+import Ajv from 'ajv/dist/2020'
 
 const redirectURI = 'auth/google/callback'
-const SERVER_ROOT_URI = 'http://localhost:3001'
 
 export const google_login = async (req, res) => {
     res.redirect(getGoogleAuthURL())
@@ -21,16 +21,7 @@ type GoogleUser = {
     iat: number
 }
 
-export const google_login_callback = async (req, res) => {
-    const code = req.query.code as string
-
-    const { id_token, access_token } = await getTokens({
-        code,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        redirectUri: `${SERVER_ROOT_URI}/${redirectURI}`
-    })
-
+export const access_token_to_jwt = async (id_token: string, access_token: string) => {
     // Fetch the user's profile with the access token and bearer
     const google_user: GoogleUser = await axios
         .get(
@@ -86,10 +77,49 @@ export const google_login_callback = async (req, res) => {
     return { token, user_id: users[0].id }
 }
 
+const google_auth_headless_schema = {
+    type: 'object',
+    properties: {
+        id_token: {
+            type: 'string'
+        },
+        access_token: {
+            type: 'string'
+        }
+    },
+    required: ['id_token', 'access_token'],
+    additionalProperties: false
+}
+
+const ajv = new Ajv({ discriminator: true })
+const validate = ajv.compile(google_auth_headless_schema)
+export const google_auth_headless = async (req, res) => {
+    validate(req.body)
+
+    if ((validate?.errors?.length || 0) > 0) {
+        return Promise.reject({ errors: validate?.errors })
+    }
+
+    return access_token_to_jwt(req.body.id_token, req.body.access_token)
+}
+
+export const google_login_callback = async (req, res) => {
+    const code = req.query.code as string
+
+    const { id_token, access_token } = await getTokens({
+        code,
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        redirectUri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`
+    })
+
+    return access_token_to_jwt(id_token, access_token)
+}
+
 function getGoogleAuthURL() {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
     const options = {
-        redirect_uri: `${SERVER_ROOT_URI}/${redirectURI}`,
+        redirect_uri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
         client_id: process.env.GOOGLE_CLIENT_ID,
         access_type: 'offline',
         response_type: 'code',
