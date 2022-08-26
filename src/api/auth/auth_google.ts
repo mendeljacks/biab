@@ -7,8 +7,8 @@ import { user } from './roles'
 
 const redirectURI = 'auth/google/callback'
 
-export const google_login = async (req, res) => {
-    res.redirect(get_google_auth_url(process.env.SERVER_ROOT_URI))
+export const google_login = async (res, server_root_uri: string) => {
+    res.redirect(get_google_auth_url(server_root_uri))
 }
 
 export type GoogleUser = {
