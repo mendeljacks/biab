@@ -4,7 +4,7 @@ import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validati
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { pool, trans } from './pg'
 import cuid from 'cuid'
-import { orma_schema } from '../../../common/orma_schema'
+import { orma_schema } from '../../orma_schema'
 import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { writeFileSync } from 'fs'
 import { orma_introspect } from 'orma/src/index'
@@ -64,5 +64,5 @@ export const query_handler = query => {
 export const introspect = async () => {
     const orma_schema = await orma_introspect('public', byo_query_fn, { db_type: 'postgres' })
     const str = `export const orma_schema = ${JSON.stringify(orma_schema, null, 2)} as const`
-    writeFileSync('../common/orma_schema.ts', str)
+    writeFileSync('./orma_schema.ts', str)
 }

@@ -5,7 +5,7 @@ import {
     remove_connection_edges
 } from 'orma/src/query/macros/where_connected_macro'
 import { OrmaSchema } from 'orma/src/introspector/introspector'
-import { orma_schema } from '../../../../common/orma_schema'
+import { orma_schema } from '../../../orma_schema'
 
 const baseline_edges = get_upwards_connection_edges(orma_schema as any as OrmaSchema)
 

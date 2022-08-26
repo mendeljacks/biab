@@ -4,7 +4,7 @@ import { beforeEach, describe, test } from 'mocha'
 
 import sinon from 'sinon'
 import fs from 'fs'
-import { orma_schema } from '../../../common/orma_schema'
+import { orma_schema } from '../../orma_schema'
 import * as orma from '../config/orma'
 import * as orma_original from 'orma'
 import { identity, pool } from '../config/pg'
