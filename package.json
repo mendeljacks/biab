@@ -1,6 +1,6 @@
 {
     "name": "biab",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -34,12 +34,10 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@fastify/cors": "^8.1.0",
         "ajv": "^8.11.0",
         "axios": "^0.27.2",
         "bcrypt": "^5.0.1",
         "cuid": "^2.1.8",
-        "fastify": "^4.4.0",
         "jsonwebtoken": "^8.5.1",
         "next-auth": "^4.10.3",
         "orma": "^1.0.138",
