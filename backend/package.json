@@ -9,7 +9,7 @@
         "test": "mocha --package package.json",
         "nt": "nodemon --exec npm run test",
         "coverage": "nodemon --exec nyc mocha --package package.json",
-        "deploy": "node -r dotenv/config -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
+        "deploy": "node -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
         "reset": "node -r dotenv/config -r ts-node/register -e \"require('./src/scripts/reset.ts').reset()\""
     },
     "nodemonConfig": {
@@ -47,6 +47,8 @@
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
+        "@jsdevtools/npm-publish": "^1.4.3",
+        "@types/node": "^18.7.13",
         "chai": "^4.3.6",
         "db-migrate": "^0.11.13",
         "db-migrate-pg": "^1.2.2",
