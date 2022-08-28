@@ -1,21 +1,22 @@
 import { expect } from 'chai'
-import cuid from 'cuid'
-import { beforeEach, describe, test } from 'mocha'
+import { describe, test } from 'mocha'
 
-import sinon from 'sinon'
 import fs from 'fs'
+import * as orma_original from 'orma'
+import sinon from 'sinon'
 import { orma_schema } from '../../orma_schema'
 import * as orma from '../config/orma'
-import * as orma_original from 'orma'
-import { identity, pool } from '../config/pg'
+import { identity } from '../config/pg'
 import { populated_data, prepopulate } from '../scripts/prepopulate'
 
+export const fake_pool = {
+    query: () => {
+        return []
+    },
+    connect: () => ({ query: () => {}, release: () => {} })
+}
+
 describe('Crud Orma', () => {
-    test('Introspection', async () => {
-        sinon.stub(orma_original, 'orma_introspect').callsFake(async () => orma_schema)
-        sinon.stub(fs, 'writeFileSync').callsFake(() => {})
-        await orma.introspect()
-    })
     test('Validation', async () => {
         sinon.stub(orma_original, 'orma_mutate').callsFake(async _ => 'called')
         let err = undefined
@@ -25,7 +26,7 @@ describe('Crud Orma', () => {
                 users: [{ oops: 'oops' }]
             }
 
-            await orma.mutate_handler(mutation)
+            await orma.mutate_handler(mutation, fake_pool)
         } catch (e) {
             err = e
         }
@@ -37,7 +38,8 @@ describe('Crud Orma', () => {
     })
     test(orma.byo_query_fn.name, async () => {
         const response = await orma.byo_query_fn([{ sql_string: '' }], {
-            query: () => ({ rows: [] })
+            query: () => ({ rows: [] }),
+            connect: () => {}
         })
         expect(response.length).to.equal(1)
     })
@@ -49,7 +51,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate()
+        await prepopulate(fake_pool)
         sinon.restore()
     })
     test(prepopulate.name, async () => {
@@ -60,7 +62,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate()
+        await prepopulate(fake_pool)
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
@@ -80,7 +82,7 @@ describe('Crud Orma', () => {
             roles: [role]
         }
 
-        await orma.mutate_handler(mutation)
+        await orma.mutate_handler(mutation, fake_pool)
 
         const body = {
             users: {
@@ -95,7 +97,7 @@ describe('Crud Orma', () => {
             }
         }
 
-        const result: any = await orma.query_handler(body)
+        const result: any = await orma.query_handler(body, fake_pool)
         sinon.restore()
         expect(result.users.length).to.equal(1)
     })

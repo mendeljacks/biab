@@ -1,14 +1,12 @@
+import Ajv from 'ajv/dist/2020'
 import axios from 'axios'
 import querystring from 'querystring'
-import { mutate_handler, query_handler } from '../../config/orma'
 import { make_token } from './auth'
-import Ajv from 'ajv/dist/2020'
-import { user } from './roles'
 
 const redirectURI = 'auth/google/callback'
 
-export const google_login = async (res, server_root_uri: string) => {
-    res.redirect(get_google_auth_url(server_root_uri))
+export const google_login = async (res, server_root_uri: string, google_client_id: string) => {
+    res.redirect(get_google_auth_url(server_root_uri, google_client_id))
 }
 
 export type GoogleUser = {
@@ -23,50 +21,17 @@ export type GoogleUser = {
     iat: number
 }
 
-export const ensure_user_exists = async (google_user: GoogleUser) => {
-    const query = {
-        users: {
-            id: true,
-            email: true,
-            password: true,
-            user_has_roles: {
-                role_id: true
-            },
-            $where: {
-                $eq: ['email', { $escape: google_user.email }]
-            }
-        }
-    }
+export type EnsureUserExistsFn = (google_user: GoogleUser) => Promise<{
+    id: number
+    user_has_roles: { role_id: number }[]
+}>
 
-    let { users } = (await query_handler(query)) as any
-
-    if (users.length > 0) {
-        return users[0]
-    }
-
-    const mutation = {
-        $operation: 'create',
-        users: [
-            {
-                email: google_user.email,
-                password: google_user.id,
-                first_name: google_user.given_name,
-                last_name: google_user.family_name,
-                user_has_roles: [
-                    {
-                        role_id: user
-                    }
-                ]
-            }
-        ]
-    }
-
-    await mutate_handler(mutation)
-    let { users: new_users } = await query_handler(query)
-    return new_users[0]
-}
-
-export const access_token_to_jwt = async (id_token: string, access_token: string) => {
+export const access_token_to_jwt = async (
+    id_token: string,
+    access_token: string,
+    ensure_user_exists: EnsureUserExistsFn,
+    jwt_secret: string
+) => {
     // Fetch the user's profile with the access token and bearer
     const google_user: GoogleUser = await axios
         .get(
@@ -80,7 +45,7 @@ export const access_token_to_jwt = async (id_token: string, access_token: string
     const token = await make_token(
         user.id,
         user.user_has_roles?.map(({ role_id }) => role_id) || [],
-        process.env.jwt_secret
+        jwt_secret
     )
 
     return { token, user_id: user.id }
@@ -102,34 +67,43 @@ const google_auth_headless_schema = {
 
 const ajv = new Ajv({ discriminator: true })
 const validate = ajv.compile(google_auth_headless_schema)
-export const google_auth_headless = async (req, res) => {
-    validate(req.body)
+export const google_auth_headless = async (
+    body: { id_token: string; access_token: string },
+    ensure_user_exists: EnsureUserExistsFn,
+    jwt_secret: string
+) => {
+    validate(body)
 
     if ((validate.errors?.length || 0) > 0) {
         return Promise.reject({ errors: validate.errors })
     }
 
-    return access_token_to_jwt(req.body.id_token, req.body.access_token)
+    return access_token_to_jwt(body.id_token, body.access_token, ensure_user_exists, jwt_secret)
 }
 
-export const google_login_callback = async (req, res) => {
-    const code = req.query.code as string
-
+export const google_login_callback = async (
+    code: string,
+    google_client_id: string,
+    google_client_secret: string,
+    server_root_uri: string,
+    ensure_user_exists: EnsureUserExistsFn,
+    jwt_secret: string
+) => {
     const { id_token, access_token } = await get_tokens({
         code,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        redirectUri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`
+        clientId: google_client_id,
+        clientSecret: google_client_secret,
+        redirectUri: `${server_root_uri}/${redirectURI}`
     })
 
-    return access_token_to_jwt(id_token, access_token)
+    return access_token_to_jwt(id_token, access_token, ensure_user_exists, jwt_secret)
 }
 
-const get_google_auth_url = (server_root_uri: string) => {
+const get_google_auth_url = (server_root_uri: string, google_client_id: string) => {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
     const options = {
         redirect_uri: `${server_root_uri}/${redirectURI}`,
-        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_id: google_client_id,
         access_type: 'offline',
         response_type: 'code',
         prompt: 'consent',

@@ -24,6 +24,9 @@ const google_user = {
     iat: 998
 } as GoogleUser
 
+const ensure_user_exists = async () => ({ id: 1, user_has_roles: [] })
+export const fake_secret = 'secret'
+
 describe('Google auth', () => {
     afterEach(() => {
         sinon.restore()
@@ -32,10 +35,7 @@ describe('Google auth', () => {
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
         })
-        sinon.stub(auth_google, 'ensure_user_exists').callsFake(async () => {
-            return { user_has_roles: [{}] }
-        })
-        const jwt = await access_token_to_jwt('hi', 'hi')
+        const jwt = await access_token_to_jwt('hi', 'hi', ensure_user_exists, fake_secret)
         expect(jwt.token).to.be.a.string
     })
     test('Google auth headless controller', async () => {
@@ -45,12 +45,16 @@ describe('Google auth', () => {
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
         })
-        const jwt = await google_auth_headless({ body: { id_token: '', access_token: '' } }, {})
+        const jwt = await google_auth_headless(
+            { id_token: '', access_token: '' },
+            ensure_user_exists,
+            fake_secret
+        )
         expect(jwt.token).to.be.a.string
 
         try {
             // should reject with no body
-            const jwt = await google_auth_headless({ body: {} }, {})
+            const jwt = await google_auth_headless({} as any, ensure_user_exists, '')
             expect(1).to.equal(2)
         } catch (error) {}
     })
@@ -63,7 +67,14 @@ describe('Google auth', () => {
             return { data: google_user }
         })
 
-        const response = await google_login_callback({ query: { code: 'test' } }, undefined)
+        const response = await google_login_callback(
+            'test',
+            '',
+            '',
+            '',
+            ensure_user_exists,
+            fake_secret
+        )
         expect(response.token).to.be.a.string
     })
     test('If user does not exist it will get created', async () => {
@@ -77,10 +88,17 @@ describe('Google auth', () => {
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
         })
-        const response = await google_login_callback({ query: { code: 'test' } }, undefined)
+        const response = await google_login_callback(
+            'test',
+            '',
+            '',
+            '',
+            ensure_user_exists,
+            fake_secret
+        )
         expect(response.token).to.be.a.string
     })
     test('Google login is a redirect', async () => {
-        expect(await google_login({}, { redirect: () => {} })).to.be.undefined
+        expect(await google_login({ redirect: () => {} }, '', '')).to.be.undefined
     })
 })

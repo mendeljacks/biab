@@ -1,23 +1,31 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
-import sinon from 'sinon'
 import { authenticate, make_token } from '../../api/auth/auth'
+import { fake_secret } from '../../api/auth/auth_google.test'
 import { ensure_perms } from '../../api/auth/perms'
 import { mutate, query, welcome } from '../../api/controllers'
-import * as orma from '../../config/orma'
+import { fake_pool } from '../orma.test'
 
 describe('Auth', () => {
     test('Requires jwt to user query/mutate', async () => {
-        const admin_token = await make_token(1, [1], process.env.jwt_secret)
-        const user_token = await make_token(1, [2], process.env.jwt_secret)
-        const t1 = await query({
-            body: {},
-            headers: { authorization: `Bearer ${admin_token}` }
-        })
-        const t2 = await mutate({
-            body: {},
-            headers: { authorization: `Bearer ${user_token}` }
-        })
+        const admin_token = await make_token(1, [1], fake_secret)
+        const user_token = await make_token(1, [2], fake_secret)
+        const t1 = await query(
+            {
+                body: {},
+                headers: { authorization: `Bearer ${admin_token}` }
+            },
+            fake_secret,
+            fake_pool
+        )
+        const t2 = await mutate(
+            {
+                body: {},
+                headers: { authorization: `Bearer ${user_token}` }
+            },
+            fake_secret,
+            fake_pool
+        )
 
         expect(t1).to.deep.equal({})
         expect(t2).to.deep.equal({})
@@ -25,12 +33,12 @@ describe('Auth', () => {
         let err = undefined
         let err2 = undefined
         try {
-            const t1 = await query({})
+            const t1 = await query({}, fake_secret, fake_pool)
         } catch (error) {
             err = error
         }
         try {
-            const t2 = await mutate({ body: {} })
+            const t2 = await mutate({ body: {} }, fake_secret, fake_pool)
         } catch (error) {
             err2 = error
         }
@@ -81,7 +89,7 @@ describe('Auth', () => {
     })
 
     test('Welcome', async () => {
-        const result = await welcome({})
+        const result = await welcome('')
         expect(result.length > 0).to.deep.equal(true)
     })
 })

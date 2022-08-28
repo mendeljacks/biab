@@ -1,6 +1,6 @@
 {
     "name": "biab",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -40,7 +40,7 @@
         "cuid": "^2.1.8",
         "jsonwebtoken": "^8.5.1",
         "next-auth": "^4.10.3",
-        "orma": "^1.0.138",
+        "orma": "^1.0.139",
         "pg": "^8.7.3",
         "ts-node": "^10.9.1"
     },

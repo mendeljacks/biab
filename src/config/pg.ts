@@ -1,4 +1,4 @@
-import { Pool, types } from 'pg'
+import { types } from 'pg'
 
 export const parse_int = val => parseInt(val)
 
@@ -7,12 +7,7 @@ types.setTypeParser(20, parse_int)
 export const identity = el => el
 types.setTypeParser(types.builtins.TIMESTAMP, identity)
 
-export const pool = new Pool({
-    connectionString: process.env.pg,
-    types,
-    ssl: { rejectUnauthorized: false }
-})
-export const trans = async fn => {
+export const trans = async (fn, pool: { connect: Function }) => {
     const connection = await pool.connect()
     try {
         await connection.query('BEGIN')
