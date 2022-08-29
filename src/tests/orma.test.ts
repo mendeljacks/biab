@@ -7,13 +7,28 @@ import sinon from 'sinon'
 import { orma_schema } from '../../orma_schema'
 import * as orma from '../config/orma'
 import { identity } from '../config/pg'
-import { populated_data, prepopulate } from '../scripts/prepopulate'
+import { prepopulate } from '../scripts/prepopulate'
 
 export const fake_pool = {
     query: () => {
         return []
     },
     connect: () => ({ query: () => {}, release: () => {} })
+}
+
+const fake_prepopulated_data = {
+    roles: [
+        { id: 1, name: 'admin' },
+        { id: 2, name: 'user' }
+    ],
+    users: [
+        {
+            id: 1,
+            email: 'admin',
+            password: '$2b$10$Cj.60A.stZiMz7wUpXAtAOeZHsqAwme3G1Qoxv0T.74tXOV3nlzca'
+        }
+    ],
+    user_has_roles: [{ id: 1, user_id: 1, role_id: 1 }]
 }
 
 describe('Crud Orma', () => {
@@ -46,12 +61,12 @@ describe('Crud Orma', () => {
     test(prepopulate.name, async () => {
         // in this case there will be nothing todo
         sinon.stub(orma, 'query_handler').callsFake(async mutation => {
-            return { roles: populated_data.roles }
+            return { roles: fake_prepopulated_data.roles }
         })
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_pool)
+        await prepopulate(fake_prepopulated_data, fake_pool)
         sinon.restore()
     })
     test(prepopulate.name, async () => {
@@ -62,7 +77,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_pool)
+        await prepopulate(fake_prepopulated_data, fake_pool)
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {

@@ -64,10 +64,10 @@ export const query_handler = (query, pool: Pool) => {
     return orma_query(query, orma_schema as any as OrmaSchema, sqls => byo_query_fn(sqls, pool))
 }
 
-export const introspect = async pool => {
+export const introspect = async (output_path: string, pool: Pool) => {
     const orma_schema = await orma_introspect('public', sqls => byo_query_fn(sqls, pool), {
         db_type: 'postgres'
     })
     const str = `export const orma_schema = ${JSON.stringify(orma_schema, null, 2)} as const`
-    writeFileSync('./orma_schema.ts', str)
+    writeFileSync(output_path, str)
 }

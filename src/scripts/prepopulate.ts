@@ -1,22 +1,11 @@
 import { get_mutation_diff } from 'orma/src/mutate/diff/diff_mutation'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 
-export const populated_data = {
-    roles: [
-        { id: 1, name: 'admin' },
-        { id: 2, name: 'user' }
-    ],
-    users: [
-        {
-            id: 1,
-            email: 'admin',
-            password: '$2b$10$Cj.60A.stZiMz7wUpXAtAOeZHsqAwme3G1Qoxv0T.74tXOV3nlzca'
-        }
-    ],
-    user_has_roles: [{ id: 1, user_id: 1, role_id: 1 }]
+type PopulatedData = {
+    [table_name: string]: any[]
 }
 
-export const prepopulate = async (pool: Pool) => {
+export const prepopulate = async (populated_data: PopulatedData, pool: Pool) => {
     const table_names = Object.keys(populated_data)
     for (const table_name of table_names) {
         const populatable_rows = populated_data[table_name]

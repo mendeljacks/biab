@@ -1,12 +1,21 @@
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { query_for_each } from 'orma/src/query/query_helpers'
 import { TokenContent } from './auth'
-import { role_has_perms } from './roles'
+
+export type RoleHasPerms = {
+    [table_name: string]: {
+        create: number[]
+        read: number[]
+        update: number[]
+        delete: number[]
+    }
+}
 
 export const ensure_perms = async (
     query,
     token_content: TokenContent,
-    mode: 'query' | 'mutate'
+    mode: 'query' | 'mutate',
+    role_has_perms: RoleHasPerms
 ) => {
     const { user_id, role_ids } = token_content
     let needed_perms = {}
@@ -18,9 +27,13 @@ export const ensure_perms = async (
 
     const table_names = Object.keys(needed_perms)
     const missing_perms = table_names.reduce((acc: string[], table_name: string) => {
-        const operation = Object.keys(needed_perms[table_name])
-        if (!role_has_perms[table_name][operation].some(role_id => role_ids.includes(role_id))) {
-            acc.push(table_name)
+        const operations = Object.keys(needed_perms[table_name])
+        for (const operation of operations) {
+            if (
+                !role_has_perms[table_name][operation].some(role_id => role_ids.includes(role_id))
+            ) {
+                acc.push(table_name)
+            }
         }
         return acc
     }, [])

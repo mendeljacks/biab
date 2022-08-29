@@ -1,7 +1,6 @@
 import dbMigrate from 'db-migrate'
-import { default as config } from '../../database.json'
 
-export const reset = async () => {
+export const reset = async (config: Object) => {
     try {
         const dbm = dbMigrate.getInstance(true, { config })
         await dbm.silence(true)

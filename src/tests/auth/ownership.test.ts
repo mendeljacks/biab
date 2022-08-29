@@ -5,8 +5,30 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { WhereConnected } from 'orma/src/types/query/query_types'
 import * as orma from '../../config/orma'
 import sinon from 'sinon'
-import { ensure_ownership } from '../../api/auth/ownership'
-import { admin, user } from '../../api/auth/roles'
+import { admin, ensure_ownership, user } from '../../api/auth/ownership'
+
+export const fake_connection_edges = {
+    reviews: [
+        { from_entity: 'reviews', from_field: 'user_id', to_entity: 'users', to_field: 'id' },
+        { from_entity: 'reviews', from_field: 'place_id', to_entity: 'places', to_field: 'id' }
+    ],
+    review_has_photos: [
+        {
+            from_entity: 'review_has_photos',
+            from_field: 'review_id',
+            to_entity: 'reviews',
+            to_field: 'id'
+        },
+        {
+            from_entity: 'review_has_photos',
+            from_field: 'photo_id',
+            to_entity: 'photos',
+            to_field: 'id'
+        }
+    ],
+
+    photos: [{ from_field: 'id', to_entity: 'review_has_photos', to_field: 'photo_id' }]
+}
 
 describe('Ownership', () => {
     test(array_equals.name, () => {
@@ -20,13 +42,18 @@ describe('Ownership', () => {
 
         // Admin not restricted to ownership
         const token_content = { user_id: 1, role_ids: [admin] }
-        const result = await ensure_ownership(query, token_content, 'query')
+        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
         expect(query).to.deep.equal(original_query)
         expect(result).to.deep.equal([])
 
         // Make sure user 1 cannot see photos belonging to user 2
         const token_content2 = { user_id: 1, role_ids: [user] }
-        const result2 = await ensure_ownership(query, token_content2, 'query')
+        const result2 = await ensure_ownership(
+            query,
+            token_content2,
+            'query',
+            fake_connection_edges
+        )
         expect(query.$where_connected.length > 0).to.deep.equal(true)
         expect(result2).to.equal(undefined)
     })
@@ -44,7 +71,12 @@ describe('Ownership', () => {
 
         const token_content = { user_id: 1, role_ids: [user] }
         try {
-            const result = await ensure_ownership(query, token_content, 'query')
+            const result = await ensure_ownership(
+                query,
+                token_content,
+                'query',
+                fake_connection_edges
+            )
             expect(true).to.equal(false)
         } catch (errors) {
             expect(errors.length > 0).to.be.true
@@ -63,7 +95,7 @@ describe('Ownership', () => {
         let query = clone(original_query)
 
         const token_content = { user_id: 1, role_ids: [user] }
-        const result = await ensure_ownership(query, token_content, 'query')
+        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
         expect(query).to.deep.equal({
             $where_connected: [
                 { $entity: 'users', $field: 'resource_id', $values: [2] },
@@ -86,7 +118,7 @@ describe('Ownership', () => {
         let query = clone(original_query)
 
         const token_content = { user_id: 1, role_ids: [user] }
-        const result = await ensure_ownership(query, token_content, 'query')
+        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
         expect(query).to.deep.equal(original_query)
         expect(result).to.equal(undefined)
     })
@@ -100,7 +132,12 @@ describe('Ownership', () => {
         let mutation = clone(original_mutation)
 
         const token_content = { user_id: 1, role_ids: [user] }
-        const result = await ensure_ownership(mutation, token_content, 'mutate')
+        const result = await ensure_ownership(
+            mutation,
+            token_content,
+            'mutate',
+            fake_connection_edges
+        )
         sinon.restore()
         expect(result).to.equal(undefined)
     })
@@ -115,7 +152,12 @@ describe('Ownership', () => {
 
         const token_content = { user_id: 1, role_ids: [user] }
         try {
-            const result = await ensure_ownership(mutation, token_content, 'mutate')
+            const result = await ensure_ownership(
+                mutation,
+                token_content,
+                'mutate',
+                fake_connection_edges
+            )
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.length > 0).to.be.true
