@@ -27,7 +27,6 @@ const add_resource_ids = (mutation: any) => {
         if (value.$operation === 'create') {
             const resource_id = cuid()
             value.resource_id = resource_id
-            value.id = { $guid: resource_id }
         }
     })
 }
