@@ -1,3 +1,4 @@
+import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
@@ -11,12 +12,13 @@ export const query = async (
     jwt_secret: string,
     pool: Pool,
     connection_edges: ConnectionEdges,
-    role_has_perms: RoleHasPerms
+    role_has_perms: RoleHasPerms,
+    orma_schema: OrmaSchema
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'query', role_has_perms)
-    await ensure_ownership(req.body, token_content, 'query', connection_edges, pool)
-    return query_handler(req.body, pool)
+    await ensure_ownership(req.body, token_content, 'query', connection_edges, pool, orma_schema)
+    return query_handler(req.body, pool, orma_schema)
 }
 
 export const mutate = async (
@@ -24,10 +26,11 @@ export const mutate = async (
     jwt_secret: string,
     pool: Pool,
     connection_edges: ConnectionEdges,
-    role_has_perms: RoleHasPerms
+    role_has_perms: RoleHasPerms,
+    orma_schema: OrmaSchema
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)
-    await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool)
-    return mutate_handler(req.body, pool)
+    await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool, orma_schema)
+    return mutate_handler(req.body, pool, orma_schema)
 }

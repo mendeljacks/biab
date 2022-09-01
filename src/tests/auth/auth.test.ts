@@ -5,6 +5,7 @@ import { fake_secret } from '../../api/auth/auth_google.test'
 import { admin, user } from '../../api/auth/ownership'
 import { ensure_perms } from '../../api/auth/perms'
 import { mutate, query, welcome } from '../../api/controllers'
+import { fake_orma_schema } from '../fake_orma_schema'
 import { fake_pool } from '../orma.test'
 import { fake_connection_edges } from './ownership.test'
 
@@ -41,7 +42,8 @@ describe('Auth', () => {
             fake_secret,
             fake_pool,
             fake_connection_edges,
-            fake_role_has_permissions
+            fake_role_has_permissions,
+            fake_orma_schema
         )
         const t2 = await mutate(
             {
@@ -51,7 +53,8 @@ describe('Auth', () => {
             fake_secret,
             fake_pool,
             fake_connection_edges,
-            fake_role_has_permissions
+            fake_role_has_permissions,
+            fake_orma_schema
         )
 
         expect(t1).to.deep.equal({})
@@ -65,7 +68,8 @@ describe('Auth', () => {
                 fake_secret,
                 fake_pool,
                 fake_connection_edges,
-                fake_role_has_permissions
+                fake_role_has_permissions,
+                fake_orma_schema
             )
         } catch (error) {
             err = error
@@ -76,7 +80,8 @@ describe('Auth', () => {
                 fake_secret,
                 fake_pool,
                 fake_connection_edges,
-                fake_role_has_permissions
+                fake_role_has_permissions,
+                fake_orma_schema
             )
         } catch (error) {
             err2 = error

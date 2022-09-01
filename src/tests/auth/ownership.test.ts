@@ -6,6 +6,8 @@ import { WhereConnected } from 'orma/src/types/query/query_types'
 import * as orma from '../../config/orma'
 import sinon from 'sinon'
 import { admin, ensure_ownership, user } from '../../api/auth/ownership'
+import { fake_pool } from '../orma.test'
+import { fake_orma_schema } from '../fake_orma_schema'
 
 export const fake_connection_edges = {
     reviews: [
@@ -42,7 +44,14 @@ describe('Ownership', () => {
 
         // Admin not restricted to ownership
         const token_content = { user_id: 1, role_ids: [admin] }
-        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
+        const result = await ensure_ownership(
+            query,
+            token_content,
+            'query',
+            fake_connection_edges,
+            fake_pool,
+            fake_orma_schema
+        )
         expect(query).to.deep.equal(original_query)
         expect(result).to.deep.equal([])
 
@@ -52,7 +61,9 @@ describe('Ownership', () => {
             query,
             token_content2,
             'query',
-            fake_connection_edges
+            fake_connection_edges,
+            fake_pool,
+            fake_orma_schema
         )
         expect(query.$where_connected.length > 0).to.deep.equal(true)
         expect(result2).to.equal(undefined)
@@ -75,7 +86,9 @@ describe('Ownership', () => {
                 query,
                 token_content,
                 'query',
-                fake_connection_edges
+                fake_connection_edges,
+                fake_pool,
+                fake_orma_schema
             )
             expect(true).to.equal(false)
         } catch (errors) {
@@ -95,7 +108,14 @@ describe('Ownership', () => {
         let query = clone(original_query)
 
         const token_content = { user_id: 1, role_ids: [user] }
-        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
+        const result = await ensure_ownership(
+            query,
+            token_content,
+            'query',
+            fake_connection_edges,
+            fake_pool,
+            fake_orma_schema
+        )
         expect(query).to.deep.equal({
             $where_connected: [
                 { $entity: 'users', $field: 'resource_id', $values: [2] },
@@ -118,7 +138,14 @@ describe('Ownership', () => {
         let query = clone(original_query)
 
         const token_content = { user_id: 1, role_ids: [user] }
-        const result = await ensure_ownership(query, token_content, 'query', fake_connection_edges)
+        const result = await ensure_ownership(
+            query,
+            token_content,
+            'query',
+            fake_connection_edges,
+            fake_pool,
+            fake_orma_schema
+        )
         expect(query).to.deep.equal(original_query)
         expect(result).to.equal(undefined)
     })
@@ -136,7 +163,9 @@ describe('Ownership', () => {
             mutation,
             token_content,
             'mutate',
-            fake_connection_edges
+            fake_connection_edges,
+            fake_pool,
+            fake_orma_schema
         )
         sinon.restore()
         expect(result).to.equal(undefined)
@@ -156,7 +185,9 @@ describe('Ownership', () => {
                 mutation,
                 token_content,
                 'mutate',
-                fake_connection_edges
+                fake_connection_edges,
+                fake_pool,
+                fake_orma_schema
             )
             expect(true).to.equal(false)
         } catch (error) {

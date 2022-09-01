@@ -1,4 +1,5 @@
 import npmPublish from '@jsdevtools/npm-publish'
+import { run_process } from './run_process'
 
 export const deploy = async () => {
     try {

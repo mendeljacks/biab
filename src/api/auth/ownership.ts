@@ -4,7 +4,6 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { get_mutation_connected_errors } from 'orma/src/mutate/verifications/mutation_connected'
 import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { WhereConnected } from 'orma/src/types/query/query_types'
-import { orma_schema } from '../../../orma_schema'
 import { byo_query_fn, Pool } from '../../config/orma'
 import { TokenContent } from './auth'
 
@@ -16,7 +15,8 @@ export const ensure_ownership = async (
     token_content: TokenContent,
     mode: 'query' | 'mutate',
     connection_edges: ConnectionEdges,
-    pool: Pool
+    pool: Pool,
+    orma_schema: OrmaSchema
 ) => {
     if (token_content.role_ids.includes(admin)) {
         return []

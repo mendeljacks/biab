@@ -1,6 +1,6 @@
 {
     "name": "biab",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -9,6 +9,7 @@
         "test": "mocha --package package.json",
         "nt": "nodemon --exec npm run test",
         "coverage": "nodemon --exec nyc mocha --package package.json",
+        "bump": "npm version patch --no-git-tag-version && git add package*.json",
         "deploy": "node -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
         "reset": "node -r dotenv/config -r ts-node/register -e \"require('./src/scripts/reset.ts').reset()\""
     },
@@ -35,12 +36,13 @@
     "license": "ISC",
     "dependencies": {
         "ajv": "^8.11.0",
+        "apple-signin-auth": "^1.7.4",
         "axios": "^0.27.2",
         "bcrypt": "^5.0.1",
         "cuid": "^2.1.8",
         "jsonwebtoken": "^8.5.1",
         "next-auth": "^4.10.3",
-        "orma": "^1.0.139",
+        "orma": "^1.0.140",
         "pg": "^8.7.3",
         "ts-node": "^10.9.1"
     },

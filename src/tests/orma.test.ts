@@ -1,13 +1,12 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
 
-import fs from 'fs'
 import * as orma_original from 'orma'
 import sinon from 'sinon'
-import { orma_schema } from '../../orma_schema'
 import * as orma from '../config/orma'
 import { identity } from '../config/pg'
 import { prepopulate } from '../scripts/prepopulate'
+import { fake_orma_schema } from './fake_orma_schema'
 
 export const fake_pool = {
     query: () => {
@@ -41,7 +40,7 @@ describe('Crud Orma', () => {
                 users: [{ oops: 'oops' }]
             }
 
-            await orma.mutate_handler(mutation, fake_pool)
+            await orma.mutate_handler(mutation, fake_pool, fake_orma_schema)
         } catch (e) {
             err = e
         }
@@ -66,7 +65,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_prepopulated_data, fake_pool)
+        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema)
         sinon.restore()
     })
     test(prepopulate.name, async () => {
@@ -77,7 +76,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_prepopulated_data, fake_pool)
+        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema)
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
@@ -97,7 +96,7 @@ describe('Crud Orma', () => {
             roles: [role]
         }
 
-        await orma.mutate_handler(mutation, fake_pool)
+        await orma.mutate_handler(mutation, fake_pool, fake_orma_schema)
 
         const body = {
             users: {
@@ -112,7 +111,7 @@ describe('Crud Orma', () => {
             }
         }
 
-        const result: any = await orma.query_handler(body, fake_pool)
+        const result: any = await orma.query_handler(body, fake_pool, fake_orma_schema)
         sinon.restore()
         expect(result.users.length).to.equal(1)
     })
