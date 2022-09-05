@@ -1,6 +1,6 @@
 {
     "name": "biab",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -42,17 +42,17 @@
         "cuid": "^2.1.8",
         "jsonwebtoken": "^8.5.1",
         "next-auth": "^4.10.3",
-        "orma": "^1.0.140",
-        "pg": "^8.7.3",
+        "orma": "^1.0.141",
+        "pg": "^8.8.0",
         "ts-node": "^10.9.1"
     },
     "devDependencies": {
         "@jsdevtools/npm-publish": "^1.4.3",
-        "@types/node": "^18.7.13",
+        "@types/node": "^18.7.15",
         "chai": "^4.3.6",
         "db-migrate": "^0.11.13",
         "db-migrate-pg": "^1.2.2",
-        "dotenv": "^16.0.1",
+        "dotenv": "^16.0.2",
         "git-rev-sync": "^3.0.2",
         "mocha": "^10.0.0",
         "nyc": "^15.1.0",
