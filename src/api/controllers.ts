@@ -2,8 +2,7 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
-import { ensure_ownership } from './auth/ownership'
-import { ensure_perms, RoleHasPerms } from './auth/perms'
+import { EnsureOwnershipFn, ensure_perms, RoleHasPerms } from './auth/perms'
 
 export const welcome = async (to: string) => `Welcome to ${to}!`
 
@@ -13,7 +12,8 @@ export const query = async (
     pool: Pool,
     connection_edges: ConnectionEdges,
     role_has_perms: RoleHasPerms,
-    orma_schema: OrmaSchema
+    orma_schema: OrmaSchema,
+    ensure_ownership: EnsureOwnershipFn
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'query', role_has_perms)
@@ -27,7 +27,8 @@ export const mutate = async (
     pool: Pool,
     connection_edges: ConnectionEdges,
     role_has_perms: RoleHasPerms,
-    orma_schema: OrmaSchema
+    orma_schema: OrmaSchema,
+    ensure_ownership: EnsureOwnershipFn
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)

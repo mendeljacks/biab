@@ -7,13 +7,7 @@ import * as orma from '../config/orma'
 import { identity } from '../config/pg'
 import { prepopulate } from '../scripts/prepopulate'
 import { fake_orma_schema } from './fake_orma_schema'
-
-export const fake_pool = {
-    query: () => {
-        return []
-    },
-    connect: () => ({ query: () => {}, release: () => {} })
-}
+import { fake_pool } from './fake_pool'
 
 const fake_prepopulated_data = {
     roles: [

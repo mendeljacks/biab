@@ -5,8 +5,8 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { WhereConnected } from 'orma/src/types/query/query_types'
 import * as orma from '../../config/orma'
 import sinon from 'sinon'
-import { admin, ensure_ownership, user } from '../../api/auth/ownership'
-import { fake_pool } from '../orma.test'
+import { admin, ensure_ownership, user } from '../../../../clubs/backend/src/api/auth/ownership'
+import { fake_pool } from '../fake_pool'
 import { fake_orma_schema } from '../fake_orma_schema'
 
 export const fake_connection_edges = {

@@ -1,17 +1,18 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
-import { authenticate, make_token } from '../../api/auth/auth'
-import { fake_secret } from '../../api/auth/auth_google.test'
-import { admin, user } from '../../api/auth/ownership'
-import { ensure_perms } from '../../api/auth/perms'
-import { mutate, query, welcome } from '../../api/controllers'
-import { fake_orma_schema } from '../fake_orma_schema'
-import { fake_pool } from '../orma.test'
-import { fake_connection_edges } from './ownership.test'
+import { authenticate, make_token } from './auth'
+import { fake_secret } from './auth_google.test'
+import { admin, user } from '../../../../clubs/backend/src/api/auth/ownership'
+import { ensure_perms } from './perms'
+import { mutate, query, welcome } from '../controllers'
+import { fake_orma_schema } from '../../tests/fake_orma_schema'
+import { fake_pool } from '../../tests/fake_pool'
+import { fake_connection_edges } from '../../tests/auth/ownership.test'
 
 const everyone = [admin, user]
 const admin_only = [admin]
 const disabled = []
+export const fake_ensure_permissions = async () => {}
 export const fake_role_has_permissions = {
     migrations: { create: disabled, read: disabled, update: disabled, delete: disabled },
     club_has_users: { create: everyone, read: everyone, update: everyone, delete: everyone },
@@ -43,7 +44,8 @@ describe('Auth', () => {
             fake_pool,
             fake_connection_edges,
             fake_role_has_permissions,
-            fake_orma_schema
+            fake_orma_schema,
+            fake_ensure_permissions
         )
         const t2 = await mutate(
             {
@@ -54,7 +56,8 @@ describe('Auth', () => {
             fake_pool,
             fake_connection_edges,
             fake_role_has_permissions,
-            fake_orma_schema
+            fake_orma_schema,
+            fake_ensure_permissions
         )
 
         expect(t1).to.deep.equal({})
@@ -69,7 +72,8 @@ describe('Auth', () => {
                 fake_pool,
                 fake_connection_edges,
                 fake_role_has_permissions,
-                fake_orma_schema
+                fake_orma_schema,
+                fake_ensure_permissions
             )
         } catch (error) {
             err = error
@@ -81,7 +85,8 @@ describe('Auth', () => {
                 fake_pool,
                 fake_connection_edges,
                 fake_role_has_permissions,
-                fake_orma_schema
+                fake_orma_schema,
+                fake_ensure_permissions
             )
         } catch (error) {
             err2 = error

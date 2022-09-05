@@ -1,7 +1,7 @@
 import { describe, test } from 'mocha'
 import { expect } from 'chai'
 import { parse_int, trans } from '../config/pg'
-import { fake_pool } from './orma.test'
+import { fake_pool } from './fake_pool'
 
 describe('Pg', () => {
     test(trans.name, async () => {

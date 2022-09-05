@@ -1,6 +1,18 @@
+import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
+import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { query_for_each } from 'orma/src/query/query_helpers'
+import { Pool } from '../../config/orma'
 import { TokenContent } from './auth'
+
+export type EnsureOwnershipFn = (
+    query: any,
+    token_content: TokenContent,
+    mode: 'query' | 'mutate',
+    connection_edges: ConnectionEdges,
+    pool: Pool,
+    orma_schema: OrmaSchema
+) => Promise<any>
 
 export type RoleHasPerms = {
     [table_name: string]: {
