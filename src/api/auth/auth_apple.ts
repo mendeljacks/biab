@@ -25,7 +25,7 @@ export const apple_access_token_to_jwt = async (
     access_token: string,
     ensure_apple_user_exists: EnsureAppleUserExistsFn,
     jwt_secret: string,
-    bundle_id: string
+    bundle_id: string | string[]
 ) => {
     // Fetch the user's profile with the access token and bearer
     const apple_user: AppleUser = await appleSignin.verifyIdToken(id_token, {
@@ -68,7 +68,7 @@ export const apple_auth_headless = async (
     body: { id_token: string; access_token: string },
     ensure_user_exists: EnsureAppleUserExistsFn,
     jwt_secret: string,
-    bundle_id: string
+    bundle_id: string | string[]
 ) => {
     validate(body)
 
