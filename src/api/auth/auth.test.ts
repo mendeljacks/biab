@@ -2,13 +2,14 @@ import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import { authenticate, make_token } from './auth'
 import { fake_secret } from './auth_google.test'
-import { admin, user } from '../../../../clubs/backend/src/api/auth/ownership'
 import { ensure_perms } from './perms'
 import { mutate, query, welcome } from '../controllers'
 import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
-import { fake_connection_edges } from '../../tests/auth/ownership.test'
+import { fake_connection_edges } from '../../../../clubs/src/api/auth/ownership2.test'
 
+export const admin = 1
+export const user = 2
 const everyone = [admin, user]
 const admin_only = [admin]
 const disabled = []
