@@ -7,6 +7,7 @@ import { mutate, query, welcome } from '../controllers'
 import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
 import { fake_connection_edges } from '../../../../clubs/src/api/auth/ownership2.test'
+import { fake_byo_query_fn } from '../../tests/fake_byo_query_fn'
 
 export const admin = 1
 export const user = 2
@@ -46,7 +47,8 @@ describe('Auth', () => {
             fake_connection_edges,
             fake_role_has_permissions,
             fake_orma_schema,
-            fake_ensure_permissions
+            fake_ensure_permissions,
+            fake_byo_query_fn
         )
         const t2 = await mutate(
             {
@@ -58,7 +60,8 @@ describe('Auth', () => {
             fake_connection_edges,
             fake_role_has_permissions,
             fake_orma_schema,
-            fake_ensure_permissions
+            fake_ensure_permissions,
+            fake_byo_query_fn
         )
 
         expect(t1).to.deep.equal({})
@@ -74,7 +77,8 @@ describe('Auth', () => {
                 fake_connection_edges,
                 fake_role_has_permissions,
                 fake_orma_schema,
-                fake_ensure_permissions
+                fake_ensure_permissions,
+                fake_byo_query_fn
             )
         } catch (error) {
             err = error
@@ -87,7 +91,8 @@ describe('Auth', () => {
                 fake_connection_edges,
                 fake_role_has_permissions,
                 fake_orma_schema,
-                fake_ensure_permissions
+                fake_ensure_permissions,
+                fake_byo_query_fn
             )
         } catch (error) {
             err2 = error
