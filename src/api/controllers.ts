@@ -30,10 +30,11 @@ export const mutate = async (
     role_has_perms: RoleHasPerms,
     orma_schema: OrmaSchema,
     ensure_ownership: EnsureOwnershipFn,
-    byo_query_fn: Function
+    byo_query_fn: Function,
+    trans: Function
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)
     await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool, orma_schema)
-    return mutate_handler(req.body, pool, orma_schema, byo_query_fn)
+    return mutate_handler(req.body, pool, orma_schema, byo_query_fn, trans)
 }

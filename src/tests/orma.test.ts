@@ -9,6 +9,7 @@ import { prepopulate } from '../scripts/prepopulate'
 import { fake_byo_query_fn } from './fake_byo_query_fn'
 import { fake_orma_schema } from './fake_orma_schema'
 import { fake_pool } from './fake_pool'
+import { fake_trans } from './fake_trans'
 
 const fake_prepopulated_data = {
     roles: [
@@ -35,7 +36,13 @@ describe('Crud Orma', () => {
                 users: [{ oops: 'oops' }]
             }
 
-            await orma.mutate_handler(mutation, fake_pool, fake_orma_schema, fake_byo_query_fn)
+            await orma.mutate_handler(
+                mutation,
+                fake_pool,
+                fake_orma_schema,
+                fake_byo_query_fn,
+                fake_trans
+            )
         } catch (e) {
             err = e
         }
@@ -53,7 +60,13 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_byo_query_fn)
+        await prepopulate(
+            fake_prepopulated_data,
+            fake_pool,
+            fake_orma_schema,
+            fake_byo_query_fn,
+            fake_trans
+        )
         sinon.restore()
     })
     test(prepopulate.name, async () => {
@@ -64,7 +77,13 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_byo_query_fn)
+        await prepopulate(
+            fake_prepopulated_data,
+            fake_pool,
+            fake_orma_schema,
+            fake_byo_query_fn,
+            fake_trans
+        )
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
@@ -84,7 +103,13 @@ describe('Crud Orma', () => {
             roles: [role]
         }
 
-        await orma.mutate_handler(mutation, fake_pool, fake_orma_schema, fake_byo_query_fn)
+        await orma.mutate_handler(
+            mutation,
+            fake_pool,
+            fake_orma_schema,
+            fake_byo_query_fn,
+            fake_trans
+        )
 
         const body = {
             users: {

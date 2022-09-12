@@ -10,7 +10,8 @@ export const prepopulate = async (
     populated_data: PopulatedData,
     pool: Pool,
     orma_schema: OrmaSchema,
-    byo_query_fn
+    byo_query_fn: Function,
+    trans: Function
 ) => {
     const table_names = Object.keys(populated_data)
     for (const table_name of table_names) {
@@ -30,7 +31,7 @@ export const prepopulate = async (
 
         if (diff[table_name]?.length > 0) {
             console.log(`Creating ${diff[table_name].length} ${table_name} rows`)
-            await mutate_handler(diff, pool, orma_schema, byo_query_fn)
+            await mutate_handler(diff, pool, orma_schema, byo_query_fn, trans)
         }
     }
 }

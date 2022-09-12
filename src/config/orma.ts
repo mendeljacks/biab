@@ -5,7 +5,6 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { apply_inherit_operations_macro } from 'orma/src/mutate/macros/inherit_operations_macro'
 import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validation'
-import { trans } from './pg'
 
 const add_resource_ids = (mutation: any) => {
     mutation_entity_deep_for_each(mutation, (value, path) => {
@@ -27,7 +26,8 @@ export const mutate_handler = (
     mutation,
     pool: Required<Pool>,
     orma_schema: OrmaSchema,
-    byo_query_fn: Function
+    byo_query_fn: Function,
+    trans: Function
 ) => {
     return trans(async connection => {
         apply_inherit_operations_macro(mutation)

@@ -8,6 +8,7 @@ import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
 import { fake_connection_edges } from '../../../../clubs/src/api/auth/ownership2.test'
 import { fake_byo_query_fn } from '../../tests/fake_byo_query_fn'
+import { fake_trans } from '../../tests/fake_trans'
 
 export const admin = 1
 export const user = 2
@@ -61,7 +62,8 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_byo_query_fn
+            fake_byo_query_fn,
+            fake_trans
         )
 
         expect(t1).to.deep.equal({})
@@ -92,7 +94,8 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_byo_query_fn
+                fake_byo_query_fn,
+                fake_trans
             )
         } catch (error) {
             err2 = error
