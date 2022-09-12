@@ -1,5 +1,6 @@
 import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { get_mutation_diff } from 'orma/src/mutate/diff/diff_mutation'
+import { add_resource_ids } from '../config/extra_macros'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 
 type PopulatedData = {
@@ -31,7 +32,7 @@ export const prepopulate = async (
 
         if (diff[table_name]?.length > 0) {
             console.log(`Creating ${diff[table_name].length} ${table_name} rows`)
-            await mutate_handler(diff, pool, orma_schema, byo_query_fn, trans)
+            await mutate_handler(diff, pool, orma_schema, byo_query_fn, trans, add_resource_ids)
         }
     }
 }

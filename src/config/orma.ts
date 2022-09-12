@@ -6,15 +6,6 @@ import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_he
 import { apply_inherit_operations_macro } from 'orma/src/mutate/macros/inherit_operations_macro'
 import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validation'
 
-const add_resource_ids = (mutation: any) => {
-    mutation_entity_deep_for_each(mutation, (value, path) => {
-        if (value.$operation === 'create') {
-            const resource_id = cuid()
-            value.resource_id = resource_id
-        }
-    })
-}
-
 export const ensure_valid_mutation = async (mutation, orma_schema: OrmaSchema) => {
     const errors = validate_mutation(mutation, orma_schema as any as OrmaSchema)
     if (errors.length > 0) {
@@ -27,11 +18,12 @@ export const mutate_handler = (
     pool: Required<Pool>,
     orma_schema: OrmaSchema,
     byo_query_fn: Function,
-    trans: Function
+    trans: Function,
+    extra_macros: Function
 ) => {
     return trans(async connection => {
         apply_inherit_operations_macro(mutation)
-        add_resource_ids(mutation)
+        extra_macros(mutation)
 
         await ensure_valid_mutation(mutation, orma_schema)
 

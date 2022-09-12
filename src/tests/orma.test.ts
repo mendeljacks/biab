@@ -3,6 +3,7 @@ import { describe, test } from 'mocha'
 
 import * as orma_original from 'orma'
 import sinon from 'sinon'
+import { add_resource_ids } from '../config/extra_macros'
 import * as orma from '../config/orma'
 import { identity } from '../config/pg'
 import { prepopulate } from '../scripts/prepopulate'
@@ -41,7 +42,8 @@ describe('Crud Orma', () => {
                 fake_pool,
                 fake_orma_schema,
                 fake_byo_query_fn,
-                fake_trans
+                fake_trans,
+                add_resource_ids
             )
         } catch (e) {
             err = e
@@ -108,7 +110,8 @@ describe('Crud Orma', () => {
             fake_pool,
             fake_orma_schema,
             fake_byo_query_fn,
-            fake_trans
+            fake_trans,
+            add_resource_ids
         )
 
         const body = {
