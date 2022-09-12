@@ -31,10 +31,11 @@ export const mutate = async (
     orma_schema: OrmaSchema,
     ensure_ownership: EnsureOwnershipFn,
     byo_query_fn: Function,
-    trans: Function
+    trans: Function,
+    extra_macros: Function
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)
     await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool, orma_schema)
-    return mutate_handler(req.body, pool, orma_schema, byo_query_fn, trans)
+    return mutate_handler(req.body, pool, orma_schema, byo_query_fn, trans, extra_macros)
 }
