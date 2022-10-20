@@ -3,6 +3,7 @@ import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
 import { EnsureOwnershipFn, ensure_perms, RoleHasPerms } from './auth/perms'
+import { validate_orma_query } from './auth/validate'
 
 export const welcome = async (to: string) => `Welcome to ${to}!`
 
@@ -16,6 +17,7 @@ export const query = async (
     ensure_ownership: EnsureOwnershipFn
 ) => {
     const token_content = await authenticate(req, jwt_secret)
+    await validate_orma_query(req.body, orma_schema)
     await ensure_perms(req.body, token_content, 'query', role_has_perms)
     await ensure_ownership(req.body, token_content, 'query', connection_edges, pool, orma_schema)
     return query_handler(req.body, pool, orma_schema)
