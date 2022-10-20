@@ -1,8 +1,6 @@
-import cuid from 'cuid'
 import { writeFileSync } from 'fs'
 import { orma_introspect, orma_mutate, orma_query } from 'orma/src/index'
 import { OrmaSchema } from 'orma/src/introspector/introspector'
-import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { apply_inherit_operations_macro } from 'orma/src/mutate/macros/inherit_operations_macro'
 import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validation'
 
@@ -52,7 +50,7 @@ export const query_handler = (
 
 export const introspect = async (output_path: string, pool: Pool, byo_query_fn: Function) => {
     const orma_schema = await orma_introspect('public', sqls => byo_query_fn(sqls, pool), {
-        db_type: 'postgres'
+        database_type: 'postgres'
     })
     const str = `export const orma_schema = ${JSON.stringify(orma_schema, null, 2)} as const`
     writeFileSync(output_path, str)
