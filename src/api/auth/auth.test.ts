@@ -6,10 +6,32 @@ import { ensure_perms } from './perms'
 import { mutate, query, welcome } from '../controllers'
 import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
-import { fake_connection_edges } from '../../../../clubs/src/api/auth/ownership2.test'
 import { fake_byo_query_fn } from '../../tests/fake_byo_query_fn'
 import { fake_trans } from '../../tests/fake_trans'
 import { add_resource_ids } from '../../config/extra_macros'
+
+const fake_connection_edges = {
+    reviews: [
+        { from_entity: 'reviews', from_field: 'user_id', to_entity: 'users', to_field: 'id' },
+        { from_entity: 'reviews', from_field: 'place_id', to_entity: 'places', to_field: 'id' }
+    ],
+    review_has_photos: [
+        {
+            from_entity: 'review_has_photos',
+            from_field: 'review_id',
+            to_entity: 'reviews',
+            to_field: 'id'
+        },
+        {
+            from_entity: 'review_has_photos',
+            from_field: 'photo_id',
+            to_entity: 'photos',
+            to_field: 'id'
+        }
+    ],
+
+    photos: [{ from_field: 'id', to_entity: 'review_has_photos', to_field: 'photo_id' }]
+}
 
 export const admin = 1
 export const user = 2
