@@ -5,30 +5,6 @@ import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
 import { apply_inherit_operations_macro } from 'orma/src/mutate/macros/inherit_operations_macro'
 import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validation'
-import { trans } from './pg'
-
-/**
- * Standardizes the output so it is always an array of arrays
- */
-export const byo_query_fn = async (sqls: { sql_string }[], connection: Pool) => {
-    const sql = sqls.map(el => el.sql_string).join(';\n')
-    const response = await connection.query(sql)
-
-    // pg driver returns array only when multiple statements detected
-    if (!Array.isArray(response)) {
-        return [response.rows]
-    } else {
-        return response.map(row => row.rows)
-    }
-}
-const add_resource_ids = (mutation: any) => {
-    mutation_entity_deep_for_each(mutation, (value, path) => {
-        if (value.$operation === 'create') {
-            const resource_id = cuid()
-            value.resource_id = resource_id
-        }
-    })
-}
 
 export const ensure_valid_mutation = async (mutation, orma_schema: OrmaSchema) => {
     const errors = validate_mutation(mutation, orma_schema as any as OrmaSchema)
@@ -37,10 +13,17 @@ export const ensure_valid_mutation = async (mutation, orma_schema: OrmaSchema) =
     }
 }
 
-export const mutate_handler = (mutation, pool: Required<Pool>, orma_schema: OrmaSchema) => {
+export const mutate_handler = (
+    mutation,
+    pool: Required<Pool>,
+    orma_schema: OrmaSchema,
+    byo_query_fn: Function,
+    trans: Function,
+    extra_macros: Function
+) => {
     return trans(async connection => {
         apply_inherit_operations_macro(mutation)
-        add_resource_ids(mutation)
+        extra_macros(mutation)
 
         await ensure_valid_mutation(mutation, orma_schema)
 
@@ -58,11 +41,16 @@ export type Pool = {
     query: Function
     connect: Function
 }
-export const query_handler = (query, pool: Pool, orma_schema: OrmaSchema) => {
+export const query_handler = (
+    query,
+    pool: Pool,
+    orma_schema: OrmaSchema,
+    byo_query_fn: Function
+) => {
     return orma_query(query, orma_schema as any as OrmaSchema, sqls => byo_query_fn(sqls, pool))
 }
 
-export const introspect = async (output_path: string, pool: Pool) => {
+export const introspect = async (output_path: string, pool: Pool, byo_query_fn: Function) => {
     const orma_schema = await orma_introspect('public', sqls => byo_query_fn(sqls, pool), {
         db_type: 'postgres'
     })

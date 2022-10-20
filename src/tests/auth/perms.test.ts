@@ -1,8 +1,7 @@
-import { describe, test } from 'mocha'
 import { expect } from 'chai'
+import { describe, test } from 'mocha'
+import { admin, fake_role_has_permissions, user } from '../../api/auth/auth.test'
 import { ensure_perms } from '../../api/auth/perms'
-import { fake_role_has_permissions } from '../../api/auth/auth.test'
-import { admin, user } from '../../../../clubs/backend/src/api/auth/ownership'
 
 describe('Table perms', () => {
     test(ensure_perms.name, async () => {

@@ -2,13 +2,17 @@ import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import { authenticate, make_token } from './auth'
 import { fake_secret } from './auth_google.test'
-import { admin, user } from '../../../../clubs/backend/src/api/auth/ownership'
 import { ensure_perms } from './perms'
 import { mutate, query, welcome } from '../controllers'
 import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
-import { fake_connection_edges } from '../../tests/auth/ownership.test'
+import { fake_connection_edges } from '../../../../clubs/src/api/auth/ownership2.test'
+import { fake_byo_query_fn } from '../../tests/fake_byo_query_fn'
+import { fake_trans } from '../../tests/fake_trans'
+import { add_resource_ids } from '../../config/extra_macros'
 
+export const admin = 1
+export const user = 2
 const everyone = [admin, user]
 const admin_only = [admin]
 const disabled = []
@@ -45,7 +49,8 @@ describe('Auth', () => {
             fake_connection_edges,
             fake_role_has_permissions,
             fake_orma_schema,
-            fake_ensure_permissions
+            fake_ensure_permissions,
+            fake_byo_query_fn
         )
         const t2 = await mutate(
             {
@@ -57,7 +62,10 @@ describe('Auth', () => {
             fake_connection_edges,
             fake_role_has_permissions,
             fake_orma_schema,
-            fake_ensure_permissions
+            fake_ensure_permissions,
+            fake_byo_query_fn,
+            fake_trans,
+            add_resource_ids
         )
 
         expect(t1).to.deep.equal({})
@@ -73,7 +81,8 @@ describe('Auth', () => {
                 fake_connection_edges,
                 fake_role_has_permissions,
                 fake_orma_schema,
-                fake_ensure_permissions
+                fake_ensure_permissions,
+                fake_byo_query_fn
             )
         } catch (error) {
             err = error
@@ -86,7 +95,10 @@ describe('Auth', () => {
                 fake_connection_edges,
                 fake_role_has_permissions,
                 fake_orma_schema,
-                fake_ensure_permissions
+                fake_ensure_permissions,
+                fake_byo_query_fn,
+                fake_trans,
+                add_resource_ids
             )
         } catch (error) {
             err2 = error
