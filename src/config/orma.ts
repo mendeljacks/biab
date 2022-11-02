@@ -3,6 +3,7 @@ import { orma_introspect, orma_mutate, orma_query } from 'orma/src/index'
 import { OrmaSchema } from 'orma/src/introspector/introspector'
 import { apply_inherit_operations_macro } from 'orma/src/mutate/macros/inherit_operations_macro'
 import { validate_mutation } from 'orma/src/mutate/verifications/mutate_validation'
+import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 
 export const ensure_valid_mutation = async (mutation, orma_schema: OrmaSchema) => {
     const errors = validate_mutation(mutation, orma_schema as any as OrmaSchema)
@@ -43,9 +44,15 @@ export const query_handler = (
     query,
     pool: Pool,
     orma_schema: OrmaSchema,
-    byo_query_fn: Function
+    byo_query_fn: Function,
+    connection_edges: ConnectionEdges
 ) => {
-    return orma_query(query, orma_schema as any as OrmaSchema, sqls => byo_query_fn(sqls, pool))
+    return orma_query(
+        query,
+        orma_schema as any as OrmaSchema,
+        sqls => byo_query_fn(sqls, pool),
+        connection_edges
+    )
 }
 
 export const introspect = async (output_path: string, pool: Pool, byo_query_fn: Function) => {
