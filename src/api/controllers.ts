@@ -21,7 +21,7 @@ export const query = async (
     await validate_orma_query(req.body, orma_schema)
     await ensure_perms(req.body, token_content, 'query', role_has_perms)
     await ensure_ownership(req.body, token_content, 'query', connection_edges, pool, orma_schema)
-    return query_handler(req.body, pool, orma_schema, byo_query_fn)
+    return query_handler(req.body, pool, orma_schema, byo_query_fn, connection_edges)
 }
 
 export const mutate = async (

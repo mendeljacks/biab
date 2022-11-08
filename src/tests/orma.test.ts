@@ -67,7 +67,8 @@ describe('Crud Orma', () => {
             fake_pool,
             fake_orma_schema,
             fake_byo_query_fn,
-            fake_trans
+            fake_trans,
+            {}
         )
         sinon.restore()
     })
@@ -84,7 +85,8 @@ describe('Crud Orma', () => {
             fake_pool,
             fake_orma_schema,
             fake_byo_query_fn,
-            fake_trans
+            fake_trans,
+            {}
         )
         sinon.restore()
     })
@@ -127,11 +129,14 @@ describe('Crud Orma', () => {
             }
         }
 
+        const connection_edges = {}
+
         const result: any = await orma.query_handler(
             body,
             fake_pool,
             fake_orma_schema,
-            fake_byo_query_fn
+            fake_byo_query_fn,
+            connection_edges
         )
         sinon.restore()
         expect(result.users.length).to.equal(1)
