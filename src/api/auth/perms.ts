@@ -33,6 +33,9 @@ export const ensure_perms = async (
     let needed_perms = {}
     const deep_for_each = mode === 'query' ? query_for_each : mutation_entity_deep_for_each
     deep_for_each(query, (value, path, entity_name) => {
+        if (entity_name.startsWith('$')) {
+            return
+        }
         if (!needed_perms[entity_name]) needed_perms[entity_name] = {}
         if (!Object.keys(role_has_perms).includes(entity_name)) {
             throw new Error(`No permissions defined for entity ${entity_name}`)
