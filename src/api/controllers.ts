@@ -1,4 +1,5 @@
 import { OrmaSchema } from 'orma/src/introspector/introspector'
+import { apply_supersede_macro } from 'orma/src/query/macros/supersede_macro'
 import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
@@ -36,6 +37,26 @@ export const mutate = async (
     trans: Function,
     extra_macros: Function
 ) => {
+    // Apply supersede macro with same perms as if user did it themselves
+    await apply_supersede_macro(
+        req.body,
+        async body => {
+            const headers = req.headers
+            const result = await query(
+                { body, headers },
+                jwt_secret,
+                pool,
+                connection_edges,
+                role_has_perms,
+                orma_schema,
+                ensure_ownership,
+                byo_query_fn
+            )
+
+            return result
+        },
+        orma_schema
+    )
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)
     await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool, orma_schema)
