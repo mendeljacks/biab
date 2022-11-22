@@ -59,7 +59,7 @@ describe('Google auth', () => {
         } catch (error) {}
     })
     test('Will not try to create user if it exists', async () => {
-        sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => [{}]))
+        // sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => [{}]))
         sinon.stub(axios, 'post').callsFake(async () => {
             return { data: {} }
         })
@@ -81,9 +81,9 @@ describe('Google auth', () => {
         sinon.stub(axios, 'post').callsFake(async () => {
             return { data: {} }
         })
-        const stub = sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => []))
+        // const stub = sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => []))
 
-        stub.onCall(5).callsFake(async sqls => sqls.map(el => [{}]))
+        // stub.onCall(5).callsFake(async sqls => sqls.map(el => [{}]))
 
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
