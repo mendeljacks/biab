@@ -10,15 +10,15 @@ export type OwnershipConfig = {
     publicly_readable: string[]
     permission_entity: string
     permission_field: string
-    resolve_permission_values: (token_content: TokenContent, pool: any, db_adapter: DbAdapter) => Promise<(string | number)[]>
 }
 
 export const make_ensure_ownership = (config: OwnershipConfig, db_adapter: DbAdapter) => {
-    const { admin_role_id, publicly_readable, permission_entity, permission_field, resolve_permission_values } = config
+    const { admin_role_id, publicly_readable, permission_entity, permission_field } = config
 
     return async (
         query: any,
         token_content: TokenContent,
+        allowed_values: (string | number)[],
         mode: 'query' | 'mutate',
         connection_edges: ConnectionEdges,
         pool: any,
@@ -27,8 +27,6 @@ export const make_ensure_ownership = (config: OwnershipConfig, db_adapter: DbAda
         if (token_content.role_ids.includes(admin_role_id)) {
             return []
         }
-
-        const allowed_values = await resolve_permission_values(token_content, pool, db_adapter)
 
         const errors =
             mode === 'query'
