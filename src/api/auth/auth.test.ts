@@ -6,7 +6,7 @@ import { ensure_perms } from './perms'
 import { mutate, query, welcome } from '../controllers'
 import { fake_orma_schema } from '../../tests/fake_orma_schema'
 import { fake_pool } from '../../tests/fake_pool'
-import { fake_byo_query_fn } from '../../tests/fake_byo_query_fn'
+import { fake_db_adapter } from '../../tests/fake_byo_query_fn'
 import { fake_trans } from '../../tests/fake_trans'
 import { add_resource_ids } from '../../config/extra_macros'
 
@@ -72,7 +72,7 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_byo_query_fn
+            fake_db_adapter
         )
         const t2 = await mutate(
             {
@@ -85,7 +85,7 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_byo_query_fn,
+            fake_db_adapter,
             fake_trans,
             add_resource_ids
         )
@@ -104,7 +104,7 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_byo_query_fn
+                fake_db_adapter
             )
         } catch (error) {
             err = error
@@ -118,7 +118,7 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_byo_query_fn,
+                fake_db_adapter,
                 fake_trans,
                 add_resource_ids
             )

@@ -1,6 +1,6 @@
 import { OrmaSchema, get_mutation_diff, ConnectionEdges } from 'orma'
 import { add_resource_ids } from '../config/extra_macros'
-import { mutate_handler, Pool, query_handler } from '../config/orma'
+import { DbAdapter, mutate_handler, Pool, query_handler } from '../config/orma'
 
 type PopulatedData = {
     [table_name: string]: any[]
@@ -10,7 +10,7 @@ export const prepopulate = async (
     populated_data: PopulatedData,
     pool: Pool,
     orma_schema: OrmaSchema,
-    byo_query_fn: Function,
+    db_adapter: DbAdapter,
     trans: Function,
     connection_edges: ConnectionEdges
 ) => {
@@ -25,7 +25,7 @@ export const prepopulate = async (
             { [table_name]: columns },
             pool,
             orma_schema,
-            byo_query_fn,
+            db_adapter,
             connection_edges
         )
         let diff = get_mutation_diff(result, { [table_name]: populatable_rows })
@@ -33,7 +33,7 @@ export const prepopulate = async (
 
         if (diff[table_name]?.length > 0) {
             console.log(`Creating ${diff[table_name].length} ${table_name} rows`)
-            await mutate_handler(diff, pool, orma_schema, byo_query_fn, trans, add_resource_ids)
+            await mutate_handler(diff, pool, orma_schema, db_adapter, trans, add_resource_ids)
         }
     }
 }

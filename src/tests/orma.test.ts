@@ -7,7 +7,7 @@ import { add_resource_ids } from '../config/extra_macros'
 import * as orma from '../config/orma'
 import { identity } from '../config/pg'
 import { prepopulate } from '../scripts/prepopulate'
-import { fake_byo_query_fn } from './fake_byo_query_fn'
+import { fake_db_adapter } from './fake_byo_query_fn'
 import { fake_orma_schema } from './fake_orma_schema'
 import { fake_pool } from './fake_pool'
 import { fake_trans } from './fake_trans'
@@ -41,7 +41,7 @@ describe('Crud Orma', () => {
                 mutation,
                 fake_pool,
                 fake_orma_schema,
-                fake_byo_query_fn,
+                fake_db_adapter,
                 fake_trans,
                 add_resource_ids
             )
@@ -55,7 +55,6 @@ describe('Crud Orma', () => {
         expect(identity(1)).to.equal(1)
     })
     test(prepopulate.name, async () => {
-        // in this case there will be nothing todo
         sinon.stub(orma, 'query_handler').callsFake(async mutation => {
             return { roles: fake_prepopulated_data.roles }
         })
@@ -66,14 +65,13 @@ describe('Crud Orma', () => {
             fake_prepopulated_data,
             fake_pool,
             fake_orma_schema,
-            fake_byo_query_fn,
+            fake_db_adapter,
             fake_trans,
             {}
         )
         sinon.restore()
     })
     test(prepopulate.name, async () => {
-        // in this case it will try to create two rows
         sinon.stub(orma, 'query_handler').callsFake(async mutation => {
             return { roles: [] }
         })
@@ -84,14 +82,14 @@ describe('Crud Orma', () => {
             fake_prepopulated_data,
             fake_pool,
             fake_orma_schema,
-            fake_byo_query_fn,
+            fake_db_adapter,
             fake_trans,
             {}
         )
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
-        const stub_byo_query_fn = async sqls => sqls.map(() => [{}])
+        const stub_db_adapter = connection => async sqls => sqls.map(() => [{}])
         const user = {
             $operation: 'create',
             email: 'mendeljacks@gmail.com',
@@ -111,7 +109,7 @@ describe('Crud Orma', () => {
             mutation,
             fake_pool,
             fake_orma_schema,
-            stub_byo_query_fn,
+            stub_db_adapter,
             fake_trans,
             add_resource_ids
         )
@@ -135,7 +133,7 @@ describe('Crud Orma', () => {
             body,
             fake_pool,
             fake_orma_schema,
-            stub_byo_query_fn,
+            stub_db_adapter,
             connection_edges
         )
         expect(result.users.length).to.equal(1)

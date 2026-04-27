@@ -1,6 +1,6 @@
 import { OrmaSchema, ConnectionEdges } from 'orma'
 import { apply_supersede_macro } from 'orma/build/query/macros/supersede_macro'
-import { mutate_handler, Pool, query_handler } from '../config/orma'
+import { DbAdapter, mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
 import { EnsureOwnershipFn, ensure_perms, RoleHasPerms } from './auth/perms'
 import { validate_orma_query } from './auth/validate'
@@ -15,13 +15,13 @@ export const query = async (
     role_has_perms: RoleHasPerms,
     orma_schema: OrmaSchema,
     ensure_ownership: EnsureOwnershipFn,
-    byo_query_fn: Function
+    db_adapter: DbAdapter
 ) => {
     const token_content = await authenticate(req, jwt_secret)
     await validate_orma_query(req.body, orma_schema)
     await ensure_perms(req.body, token_content, 'query', role_has_perms)
     await ensure_ownership(req.body, token_content, 'query', connection_edges, pool, orma_schema)
-    return query_handler(req.body, pool, orma_schema, byo_query_fn, connection_edges)
+    return query_handler(req.body, pool, orma_schema, db_adapter, connection_edges)
 }
 
 export const mutate = async (
@@ -32,11 +32,10 @@ export const mutate = async (
     role_has_perms: RoleHasPerms,
     orma_schema: OrmaSchema,
     ensure_ownership: EnsureOwnershipFn,
-    byo_query_fn: Function,
+    db_adapter: DbAdapter,
     trans: Function,
     extra_macros: Function
 ) => {
-    // Apply supersede macro with same perms as if user did it themselves
     await apply_supersede_macro(
         req.body,
         async body => {
@@ -49,7 +48,7 @@ export const mutate = async (
                 role_has_perms,
                 orma_schema,
                 ensure_ownership,
-                byo_query_fn
+                db_adapter
             )
 
             return result
@@ -59,5 +58,5 @@ export const mutate = async (
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, token_content, 'mutate', role_has_perms)
     await ensure_ownership(req.body, token_content, 'mutate', connection_edges, pool, orma_schema)
-    return mutate_handler(req.body, pool, orma_schema, byo_query_fn, trans, extra_macros)
+    return mutate_handler(req.body, pool, orma_schema, db_adapter, trans, extra_macros)
 }
