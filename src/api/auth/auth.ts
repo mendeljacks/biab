@@ -8,9 +8,10 @@ export type TokenContent = {
 export const make_token = async (
     user_id: number,
     role_ids: number[],
-    secret: string
+    secret: string,
+    expiry?: string
 ): Promise<string> => {
-    return jwt.sign({ user_id, role_ids } as TokenContent, secret)
+    return jwt.sign({ user_id, role_ids } as TokenContent, secret, expiry ? { expiresIn: expiry } : {})
 }
 
 export const authenticate = async (req, jwt_secret): Promise<TokenContent> => {
