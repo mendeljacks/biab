@@ -91,7 +91,7 @@ describe('Auth', () => {
         )
 
         expect(t1).to.deep.equal({})
-        expect(t2).to.deep.equal({})
+        expect(t2).to.equal(undefined)
 
         let err = undefined
         let err2 = undefined
