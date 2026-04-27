@@ -1,6 +1,4 @@
-import { OrmaSchema } from 'orma/src/introspector/introspector'
-import { get_mutation_diff } from 'orma/src/mutate/diff/diff_mutation'
-import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
+import { OrmaSchema, get_mutation_diff, ConnectionEdges } from 'orma'
 import { add_resource_ids } from '../config/extra_macros'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 

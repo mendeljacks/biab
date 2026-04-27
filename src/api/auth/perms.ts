@@ -1,7 +1,6 @@
-import { OrmaSchema } from 'orma/src/introspector/introspector'
-import { mutation_entity_deep_for_each } from 'orma/src/mutate/helpers/mutate_helpers'
-import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
-import { query_for_each } from 'orma/src/query/query_helpers'
+import { OrmaSchema, ConnectionEdges } from 'orma'
+import { mutation_entity_deep_for_each } from 'orma/build/mutate/helpers/mutate_helpers'
+import { query_for_each } from 'orma/build/query/query_helpers'
 import { Pool } from '../../config/orma'
 import { TokenContent } from './auth'
 

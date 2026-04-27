@@ -1,6 +1,5 @@
-import { OrmaSchema } from 'orma/src/introspector/introspector'
-import { apply_supersede_macro } from 'orma/src/query/macros/supersede_macro'
-import { ConnectionEdges } from 'orma/src/query/macros/where_connected_macro'
+import { OrmaSchema, ConnectionEdges } from 'orma'
+import { apply_supersede_macro } from 'orma/build/query/macros/supersede_macro'
 import { mutate_handler, Pool, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
 import { EnsureOwnershipFn, ensure_perms, RoleHasPerms } from './auth/perms'

@@ -91,7 +91,7 @@ describe('Crud Orma', () => {
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
-        sinon.stub(orma, 'byo_query_fn').callsFake(async sqls => sqls.map(el => [{}]))
+        const stub_byo_query_fn = async sqls => sqls.map(() => [{}])
         const user = {
             $operation: 'create',
             email: 'mendeljacks@gmail.com',
@@ -111,7 +111,7 @@ describe('Crud Orma', () => {
             mutation,
             fake_pool,
             fake_orma_schema,
-            fake_byo_query_fn,
+            stub_byo_query_fn,
             fake_trans,
             add_resource_ids
         )
@@ -135,10 +135,9 @@ describe('Crud Orma', () => {
             body,
             fake_pool,
             fake_orma_schema,
-            fake_byo_query_fn,
+            stub_byo_query_fn,
             connection_edges
         )
-        sinon.restore()
         expect(result.users.length).to.equal(1)
     })
 })
