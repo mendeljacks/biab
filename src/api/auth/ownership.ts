@@ -10,10 +10,11 @@ export type OwnershipConfig = {
     publicly_readable: string[]
     permission_entity: string
     permission_field: string
+    resolve_permission_values: (token_content: TokenContent, pool: any, db_adapter: DbAdapter) => Promise<(string | number)[]>
 }
 
 export const make_ensure_ownership = (config: OwnershipConfig, db_adapter: DbAdapter) => {
-    const { admin_role_id, publicly_readable, permission_entity, permission_field } = config
+    const { admin_role_id, publicly_readable, permission_entity, permission_field, resolve_permission_values } = config
 
     return async (
         query: any,
@@ -27,18 +28,20 @@ export const make_ensure_ownership = (config: OwnershipConfig, db_adapter: DbAda
             return []
         }
 
+        const allowed_values = await resolve_permission_values(token_content, pool, db_adapter)
+
         const errors =
             mode === 'query'
                 ? await get_query_ownership_errors(
                       query,
-                      token_content,
+                      allowed_values,
                       publicly_readable,
                       permission_entity,
                       permission_field
                   )
                 : await get_mutate_ownership_errors(
                       query,
-                      token_content,
+                      allowed_values,
                       orma_schema,
                       connection_edges,
                       pool,
@@ -55,7 +58,7 @@ export const make_ensure_ownership = (config: OwnershipConfig, db_adapter: DbAda
 
 const get_mutate_ownership_errors = async (
     mutation: any,
-    token_content: TokenContent,
+    allowed_values: (string | number)[],
     orma_schema: OrmaSchema,
     connection_edges: ConnectionEdges,
     pool: any,
@@ -70,7 +73,7 @@ const get_mutate_ownership_errors = async (
         connection_edges,
         db_adapter(pool),
         [] as any,
-        [{ $entity: permission_entity, $field: permission_field, $values: [token_content.user_id] }],
+        [{ $entity: permission_entity, $field: permission_field, $values: allowed_values }],
         mutation_plan.mutation_pieces
     )
     return connected_errors
@@ -84,15 +87,14 @@ const get_query_table_names = (query: any): string[] => {
     return [...table_names]
 }
 
-const array_equals = (a: any[], b: any[]) =>
-    Array.isArray(a) &&
-    Array.isArray(b) &&
-    a.length === b.length &&
-    a.every((val, index) => val === b[index])
+const array_subset = (subset: any[], superset: any[]) =>
+    Array.isArray(subset) &&
+    Array.isArray(superset) &&
+    subset.every(val => superset.includes(val))
 
 const get_query_ownership_errors = async (
     query: any,
-    token_content: TokenContent,
+    allowed_values: (string | number)[],
     publicly_readable: string[],
     permission_entity: string,
     permission_field: string
@@ -102,10 +104,9 @@ const get_query_ownership_errors = async (
         return []
     }
 
-    const user_id = token_content.user_id
     const where_connected: any[] = query.$where_connected ?? []
 
-    const given_user_ids = where_connected.reduce(
+    const given_values = where_connected.reduce(
         (acc: (string | number)[], { $entity, $field, $values }: any) => {
             if ($entity === permission_entity && $field === permission_field) {
                 acc.push(...$values)
@@ -115,14 +116,14 @@ const get_query_ownership_errors = async (
         []
     )
 
-    if (given_user_ids.length === 0) {
+    if (given_values.length === 0) {
         push_path(
             ['$where_connected'],
-            { $entity: permission_entity, $field: permission_field, $values: [user_id] },
+            { $entity: permission_entity, $field: permission_field, $values: allowed_values },
             query
         )
     } else {
-        if (!array_equals(given_user_ids, [user_id])) {
+        if (!array_subset(given_values, allowed_values)) {
             return [{ message: 'Insufficient permission to view other users data' }]
         }
     }
