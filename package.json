@@ -1,18 +1,18 @@
 {
     "name": "biab",
-    "version": "1.0.42",
+    "version": "1.0.43",
     "description": "",
     "type": "module",
     "main": "build/index.js",
     "scripts": {
-        "start": "node -r ts-node/register -e \"require('./src/api/server.ts').start()\"",
-        "dev": "nodemon --exec \"node -r dotenv/config -r ts-node/register -e \\\"require('./src/api/server.ts').start()\\\"\"",
+        "start": "tsx -e \"import('./src/api/server.ts').then(m => m.start())\"",
+        "dev": "nodemon --exec \"tsx -r dotenv/config -e \\\"import('./src/api/server.ts').then(m => m.start())\\\"\"",
         "test": "mocha --package package.json",
         "nt": "nodemon --exec npm run test",
         "coverage": "nodemon --exec nyc mocha --package package.json",
         "bump": "npm version patch --no-git-tag-version && git add package*.json",
-        "deploy": "node -r ts-node/register -e \"require('./src/hosting/deploy.ts').deploy()\"",
-        "reset": "node -r dotenv/config -r ts-node/register -e \"require('./src/scripts/reset.ts').reset()\""
+        "deploy": "tsx -e \"import('./src/hosting/deploy.ts').then(m => m.deploy())\"",
+        "reset": "tsx -r dotenv/config -e \"import('./src/scripts/reset.ts').then(m => m.reset())\""
     },
     "nodemonConfig": {
         "signal": "SIGKILL",
@@ -24,8 +24,8 @@
         ]
     },
     "mocha": {
+        "loader": "tsx/esm",
         "require": [
-            "ts-node/register",
             "dotenv/config"
         ],
         "spec": [
@@ -46,7 +46,7 @@
         "next-auth": "^4.10.3",
         "orma": "^1.0.278",
         "pg": "^8.8.0",
-        "ts-node": "^10.9.1"
+        "tsx": "^4.21.0"
     },
     "devDependencies": {
         "@jsdevtools/npm-publish": "^1.4.3",
