@@ -1,3 +1,6 @@
+export { dehydrate } from './scripts/dehydrate'
+export { hydrate } from './scripts/hydrate'
+
 process.on('unhandledRejection', err => {
     console.log(err)
 })

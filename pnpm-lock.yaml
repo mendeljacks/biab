@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      JSONStream:
+        specifier: ^1.3.5
+        version: 1.3.5
       ajv:
         specifier: ^8.11.0
         version: 8.20.0
@@ -26,6 +29,9 @@ importers:
       cuid:
         specifier: ^2.1.8
         version: 2.1.8
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       jsonwebtoken:
         specifier: ^8.5.1
         version: 8.5.1
@@ -35,12 +41,24 @@ importers:
       orma:
         specifier: ^1.0.280
         version: 1.0.280
+      p-limit:
+        specifier: ^7.3.0
+        version: 7.3.0
       pg:
         specifier: ^8.8.0
         version: 8.20.0
+      retry:
+        specifier: ^0.13.1
+        version: 0.13.1
+      stopcock:
+        specifier: ^1.1.0
+        version: 1.1.0
       tsx:
         specifier: ^4.21.0
         version: 4.21.0
+      yay_json:
+        specifier: ^1.0.33
+        version: 1.0.33
     devDependencies:
       '@jsdevtools/npm-publish':
         specifier: ^1.4.3
@@ -594,6 +612,10 @@ packages:
   '@types/pegjs@0.10.6':
     resolution: {integrity: sha512-eLYXDbZWXh2uxf+w8sXS8d6KSoXTswfps6fvCUuVAGN8eRpfe7h9eSRydxiSJvo9Bf+GzifsDOr9TMQlmJdmkw==}
 
+  JSONStream@1.3.5:
+    resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
+    hasBin: true
+
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
 
@@ -864,6 +886,9 @@ packages:
   cycle@1.0.3:
     resolution: {integrity: sha512-TVF6svNzeQCOpjCqsy0/CSy8VgObG3wXusJ73xW2GbG5rGx7lC8zxDSURicsXI2UsGdi2L0QNRCi745/wUDvsA==}
     engines: {node: '>=0.4.0'}
+
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   db-migrate-base@2.3.1:
     resolution: {integrity: sha512-HewYQ3HPmy7NOWmhhMLg9TzN1StEtSqGL3w8IbBRCxEsJ+oM3bDUQ/z5fqpYKfIUK07mMXieCmZYwFpwWkSHDw==}
@@ -1336,6 +1361,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  jsonparse@1.3.1:
+    resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
+    engines: {'0': node >= 0.2.0}
+
   jsonschema@1.5.0:
     resolution: {integrity: sha512-K+A9hhqbn0f3pJX17Q/7H6yQfD/5OXgdrR5UE12gMXCiN9D5Xq2o5mddV2QEcX/bjla99ASsAAQUyMCCRWAEhw==}
 
@@ -1645,6 +1674,10 @@ packages:
     resolution: {integrity: sha512-TYOanM3wGwNGsZN2cVTYPArw454xnXj5qmWF1bEoAc4+cU/ol7GVh7odevjp1FNHduHc3KZMcFduxU5Xc6uJRQ==}
     engines: {node: '>=10'}
 
+  p-limit@7.3.0:
+    resolution: {integrity: sha512-7cIXg/Z0M5WZRblrsOla88S4wAK+zOQQWeBYfV3qJuJXMr+LnbYjaadrFaS0JILfEDPVqHyKnZ1Z/1d6J9VVUw==}
+    engines: {node: '>=20'}
+
   p-locate@4.1.0:
     resolution: {integrity: sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==}
     engines: {node: '>=8'}
@@ -1796,6 +1829,9 @@ packages:
     resolution: {integrity: sha512-6YHEFRL9mfgcAvql/XhwTvf5jKcOiiupt2FiJxHkiX1z4j7WL8J/jRHYLluORvc1XxB5rV20KoeK00gVJamspg==}
     engines: {node: '>=0.6'}
 
+  ramda@0.28.0:
+    resolution: {integrity: sha512-9QnLuG/kPVgWvMQ4aODhsBUFKOUmnbUnsSXACv+NCQZcHbeb+v8Lodp8OVxtRULN1/xOyYLLaL6npE6dMq5QTA==}
+
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
@@ -1862,6 +1898,10 @@ packages:
     resolution: {integrity: sha512-TyeJ1zif53BPfHootBGwPRYT1RUt6oGWsaQr8UyZW/eAm9bKoijtvruSDEmZHm92CwS9nj7/fWttqPCgzep8CA==}
     engines: {node: '>= 0.4'}
     hasBin: true
+
+  retry@0.13.1:
+    resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
+    engines: {node: '>= 4'}
 
   revalidator@0.1.8:
     resolution: {integrity: sha512-xcBILK2pA9oh4SiinPEZfhP8HfrB/ha+a2fTMyl7Om2WjlDVrOQy99N2MXXlUHqGJz4qEu2duXxHJjDWuK/0xg==}
@@ -1989,6 +2029,10 @@ packages:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
 
+  stopcock@1.1.0:
+    resolution: {integrity: sha512-SNTAH55X9Ra5uE1JIxiPT3WwZiNMTcdCup+7qWOULNVUqiqi62qctNJ+x1R4znNudtkyu8LGc7Ok6Ldt+8N5iQ==}
+    engines: {node: '>=4.0.0'}
+
   string-argv@0.3.2:
     resolution: {integrity: sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==}
     engines: {node: '>=0.6.19'}
@@ -2049,6 +2093,9 @@ packages:
   test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
     engines: {node: '>=8'}
+
+  through@2.3.8:
+    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
@@ -2204,9 +2251,16 @@ packages:
     resolution: {integrity: sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==}
     engines: {node: '>=10'}
 
+  yay_json@1.0.33:
+    resolution: {integrity: sha512-UYWrpn4sh9tJuDYMWMnJlZp7Wtn1KlB+UShJ2BRjGLXCDt0wo2hQwR+WqWfABhI2cTPaSlT8E9SenXb3Ma45hQ==}
+
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+
+  yocto-queue@1.2.2:
+    resolution: {integrity: sha512-4LCcse/U2MHZ63HAJVE+v71o7yOdIe4cZ70Wpf8D/IyjDKYQLV5GD46B+hSTjJsvV5PztjvHoU580EftxjDZFQ==}
+    engines: {node: '>=12.20'}
 
 snapshots:
 
@@ -2620,6 +2674,11 @@ snapshots:
 
   '@types/pegjs@0.10.6': {}
 
+  JSONStream@1.3.5:
+    dependencies:
+      jsonparse: 1.3.1
+      through: 2.3.8
+
   abbrev@1.1.1: {}
 
   accepts@1.3.8:
@@ -2920,6 +2979,8 @@ snapshots:
   cuid@2.1.8: {}
 
   cycle@1.0.3: {}
+
+  date-fns@4.1.0: {}
 
   db-migrate-base@2.3.1:
     dependencies:
@@ -3419,6 +3480,8 @@ snapshots:
 
   json5@2.2.3: {}
 
+  jsonparse@1.3.1: {}
+
   jsonschema@1.5.0: {}
 
   jsonwebtoken@8.5.1:
@@ -3765,6 +3828,10 @@ snapshots:
     dependencies:
       yocto-queue: 0.1.0
 
+  p-limit@7.3.0:
+    dependencies:
+      yocto-queue: 1.2.2
+
   p-locate@4.1.0:
     dependencies:
       p-limit: 2.3.0
@@ -3901,6 +3968,8 @@ snapshots:
     dependencies:
       side-channel: 1.1.0
 
+  ramda@0.28.0: {}
+
   randombytes@2.1.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -3966,6 +4035,8 @@ snapshots:
       is-core-module: 2.16.1
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
+
+  retry@0.13.1: {}
 
   revalidator@0.1.8: {}
 
@@ -4136,6 +4207,8 @@ snapshots:
 
   statuses@2.0.2: {}
 
+  stopcock@1.1.0: {}
+
   string-argv@0.3.2: {}
 
   string-width@4.2.3:
@@ -4189,6 +4262,8 @@ snapshots:
       '@istanbuljs/schema': 0.1.6
       glob: 7.2.3
       minimatch: 3.1.5
+
+  through@2.3.8: {}
 
   to-regex-range@5.0.1:
     dependencies:
@@ -4351,4 +4426,10 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 20.2.9
 
+  yay_json@1.0.33:
+    dependencies:
+      ramda: 0.28.0
+
   yocto-queue@0.1.0: {}
+
+  yocto-queue@1.2.2: {}
