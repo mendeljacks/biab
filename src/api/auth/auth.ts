@@ -2,19 +2,12 @@ import jwt from 'jsonwebtoken'
 
 export type TokenContent = {
     user_id: number
-    role_ids: number[]
+}
+export const make_token = async (user_id: number, secret: string, expiry?: string): Promise<string> => {
+    return jwt.sign({ user_id } as TokenContent, secret, expiry ? { expiresIn: expiry } : {})
 }
 
-export const make_token = async (
-    user_id: number,
-    role_ids: number[],
-    secret: string,
-    expiry?: string
-): Promise<string> => {
-    return jwt.sign({ user_id, role_ids } as TokenContent, secret, expiry ? { expiresIn: expiry } : {})
-}
-
-export const authenticate = async (req, jwt_secret): Promise<TokenContent> => {
+export const authenticate = async (req: Record<string, any>, jwt_secret: string): Promise<TokenContent> => {
     const token = req.headers?.authorization?.split(' ')[1]
     if (!token) return Promise.reject('No token')
 
