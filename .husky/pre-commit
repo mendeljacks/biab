@@ -1,1 +1,1 @@
-pnpm prettier --write src/ && pnpm exec organize-imports-cli src/ && pnpm run bump
+pnpm run bump && pnpm prettier --write src/ && pnpm exec organize-imports-cli src/ && git add package.json pnpm-lock.yaml
