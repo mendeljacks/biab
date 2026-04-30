@@ -55,8 +55,12 @@ export const dehydrate = async (args: DehydrateArgs) => {
 const log_every = 10000
 const log = (file_name: string, length: number) => (i: number) => {
     if (i % log_every === 0) {
-        process.stdout.clearLine(0)
-        process.stdout.cursorTo(0)
+        if (process.stdout.clearLine) {
+            process.stdout.clearLine(0)
+        }
+        if (process.stdout.cursorTo) {
+            process.stdout.cursorTo(0)
+        }
         process.stdout.write(
             `Dehydrating ${file_name.split('/').pop().split('_hydration.json').shift()}: ${i}/${length}`
         )

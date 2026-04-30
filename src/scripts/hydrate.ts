@@ -198,7 +198,11 @@ const hydrate_rows = async (
 
             await mutate_retried(mutation, orma_schema, db_adapter, retries)
 
-            process.stdout.clearLine(0)
+            if (process.stdout.clearLine) {
+                process.stdout.clearLine(0)
+            } else {
+                process.stdout.write('\n')
+            }
         }
 
         console.timeEnd(msg)
