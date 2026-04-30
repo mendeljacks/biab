@@ -1,6 +1,6 @@
 {
   "name": "biab",
-  "version": "1.0.53",
+  "version": "1.0.55",
   "description": "",
   "type": "module",
   "main": "build/index.js",

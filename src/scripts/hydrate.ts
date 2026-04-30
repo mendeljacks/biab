@@ -117,7 +117,7 @@ const delete_all_rows = async (
 
     const disable_fk = `SET session_replication_role = 'replica';`
     const delete_statements = entity_names.map(el => `DELETE FROM ${schema_name}.${el}`).join(';\n')
-    const enable_fk = `SET session_replication_role = 'DEFAULT';`
+    const enable_fk = `SET session_replication_role = 'origin';`
 
     try {
         await db_adapter([{ sql_string: disable_fk }, { sql_string: delete_statements }, { sql_string: enable_fk }])
