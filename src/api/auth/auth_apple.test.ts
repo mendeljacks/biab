@@ -1,7 +1,7 @@
-import { describe, test } from 'mocha'
-import { expect } from 'chai'
-import sinon from 'sinon'
 import appleSignin from 'apple-signin-auth'
+import { expect } from 'chai'
+import { describe, test } from 'mocha'
+import sinon from 'sinon'
 import { apple_access_token_to_jwt } from './auth_apple'
 import { fake_secret } from './auth_google.test'
 

@@ -1,15 +1,11 @@
-import { describe, test } from 'mocha'
 import { expect } from 'chai'
+import { describe, test } from 'mocha'
 import { promise_limited } from './promise_limited'
 
 describe(promise_limited.name, () => {
     test('resolves array of promises', async () => {
         const result = await promise_limited(
-            [
-                () => Promise.resolve(1),
-                () => Promise.resolve(2),
-                () => Promise.resolve(3)
-            ],
+            [() => Promise.resolve(1), () => Promise.resolve(2), () => Promise.resolve(3)],
             { limit: 10 }
         )
         expect(result).to.deep.equal([1, 2, 3])
@@ -33,11 +29,7 @@ describe(promise_limited.name, () => {
     })
 
     test('rejects if any promise rejects', async () => {
-        const values = [
-            () => Promise.resolve(1),
-            () => Promise.reject(new Error('fail')),
-            () => Promise.resolve(3)
-        ]
+        const values = [() => Promise.resolve(1), () => Promise.reject(new Error('fail')), () => Promise.resolve(3)]
         try {
             await promise_limited(values, { limit: 100 })
             expect.fail('Should have thrown')

@@ -1,13 +1,12 @@
 import { expect } from 'chai'
-import { drop_if_busy } from './drop_if_busy'
 import { stub } from 'sinon'
-import pLimit from 'p-limit'
+import { drop_if_busy, type Running } from './drop_if_busy'
 
 describe('drop_if_busy', () => {
-    let running = {} as Record<string, pLimit.Limit>
+    let running = {} as Running
 
     beforeEach(() => {
-        running = {} as Record<string, pLimit.Limit>
+        running = {} as Running
     })
 
     it('executes function when not busy', async () => {

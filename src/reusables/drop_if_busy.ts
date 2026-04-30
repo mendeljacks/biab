@@ -1,11 +1,7 @@
-import pLimit from 'p-limit'
+import pLimit, { type LimitFunction } from 'p-limit'
 
-export type Running = Record<string, pLimit.Limit>
-export const drop_if_busy = async (
-    fn: () => Promise<any>,
-    key: string,
-    running: Running
-) => {
+export type Running = Record<string, LimitFunction>
+export const drop_if_busy = async (fn: () => Promise<any>, key: string, running: Running) => {
     if (running[key]) {
         return
     }

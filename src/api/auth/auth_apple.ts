@@ -38,11 +38,7 @@ export const apple_access_token_to_jwt = async (
 
     const user = await ensure_apple_user_exists(apple_user)
 
-    const token = await make_token(
-        user.id,
-        user.user_has_roles?.map(({ role_id }) => role_id) || [],
-        jwt_secret
-    )
+    const token = await make_token(user.id, jwt_secret)
 
     return { token, user_id: user.id }
 }
@@ -76,11 +72,5 @@ export const apple_auth_headless = async (
         return Promise.reject({ errors: validate.errors })
     }
 
-    return apple_access_token_to_jwt(
-        body.id_token,
-        body.access_token,
-        ensure_user_exists,
-        jwt_secret,
-        bundle_id
-    )
+    return apple_access_token_to_jwt(body.id_token, body.access_token, ensure_user_exists, jwt_secret, bundle_id)
 }

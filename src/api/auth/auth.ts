@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 
 export type TokenContent = {
-    user_id: number
+    user_id: string | number
 }
-export const make_token = async (user_id: number, secret: string, expiry?: string): Promise<string> => {
+export const make_token = async (user_id: string | number, secret: string, expiry?: string): Promise<string> => {
     return jwt.sign({ user_id } as TokenContent, secret, expiry ? { expiresIn: expiry } : {})
 }
 

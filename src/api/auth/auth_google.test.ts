@@ -1,16 +1,14 @@
-import { describe, test, afterEach } from 'mocha'
-import { expect } from 'chai'
-import {
-    access_token_to_jwt,
-    GoogleUser,
-    google_auth_headless,
-    google_login,
-    google_login_callback
-} from './auth_google'
 import axios from 'axios'
+import { expect } from 'chai'
+import { afterEach, describe, test } from 'mocha'
 import sinon from 'sinon'
-import * as orma from '../../config/orma'
-import * as auth_google from './auth_google'
+import {
+  access_token_to_jwt,
+  google_auth_headless,
+  google_login,
+  google_login_callback,
+  GoogleUser
+} from './auth_google'
 
 const google_user = {
     id: 'string',
@@ -45,11 +43,7 @@ describe('Google auth', () => {
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
         })
-        const jwt = await google_auth_headless(
-            { id_token: '', access_token: '' },
-            ensure_user_exists,
-            fake_secret
-        )
+        const jwt = await google_auth_headless({ id_token: '', access_token: '' }, ensure_user_exists, fake_secret)
         expect(jwt.token).to.be.a.string
 
         try {
@@ -67,14 +61,7 @@ describe('Google auth', () => {
             return { data: google_user }
         })
 
-        const response = await google_login_callback(
-            'test',
-            '',
-            '',
-            '',
-            ensure_user_exists,
-            fake_secret
-        )
+        const response = await google_login_callback('test', '', '', '', ensure_user_exists, fake_secret)
         expect(response.token).to.be.a.string
     })
     test('If user does not exist it will get created', async () => {
@@ -88,14 +75,7 @@ describe('Google auth', () => {
         sinon.stub(axios, 'get').callsFake(async () => {
             return { data: google_user }
         })
-        const response = await google_login_callback(
-            'test',
-            '',
-            '',
-            '',
-            ensure_user_exists,
-            fake_secret
-        )
+        const response = await google_login_callback('test', '', '', '', ensure_user_exists, fake_secret)
         expect(response.token).to.be.a.string
     })
     test('Google login is a redirect', async () => {

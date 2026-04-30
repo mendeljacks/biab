@@ -1,14 +1,7 @@
 import { createReadStream, existsSync } from 'fs'
 import JSONStream from 'JSONStream'
-import {
-    OrmaSchema,
-    orma_introspect,
-    orma_mutate,
-} from 'orma'
-import {
-    get_child_edges,
-    get_entity_names,
-} from 'orma/build/helpers/schema_helpers'
+import { OrmaSchema, orma_introspect, orma_mutate } from 'orma'
+import { get_child_edges, get_entity_names } from 'orma/build/helpers/schema_helpers'
 import { pipeline } from 'stream/promises'
 import { toposort } from 'yay_json'
 import { promise_retry } from '../reusables/promise_retry'
@@ -38,14 +31,7 @@ export type HydrateArgs = {
 }
 
 const is_db_retryable = async (err: any) => {
-    if (
-        [
-            'ECONNRESET',
-            'ECONNREFUSED',
-            'PROTOCOL_CONNECTION_LOST',
-            'ER_OPTION_PREVENTS_STATEMENT',
-        ].includes(err.code)
-    ) {
+    if (['ECONNRESET', 'ECONNREFUSED', 'PROTOCOL_CONNECTION_LOST', 'ER_OPTION_PREVENTS_STATEMENT'].includes(err.code)) {
         return true
     }
     console.warn('Non Retryable error:', err)
@@ -62,14 +48,12 @@ export const hydrate = async (args: HydrateArgs) => {
         env_mode,
         priority_entities = [],
         batch_size = 2000,
-        retries = 100,
+        retries = 100
     } = args
 
     // Guard: only allow in TEST or DEV
     if (env_mode !== 'TEST' && env_mode !== 'DEV') {
-        console.error(
-            `TRIED TO DELETE ENTIRE ${env_mode} DATABASE! EXITING...`
-        )
+        console.error(`TRIED TO DELETE ENTIRE ${env_mode} DATABASE! EXITING...`)
         process.exit(1)
     }
 
@@ -80,7 +64,7 @@ export const hydrate = async (args: HydrateArgs) => {
         const orma_schema =
             args.orma_schema ??
             (await orma_introspect(schema_name, db_adapter, {
-                database_type,
+                database_type
             }))
 
         await delete_all_rows(db_adapter, orma_schema, schema_name)
@@ -91,13 +75,14 @@ export const hydrate = async (args: HydrateArgs) => {
         // Build DAG from FK relationships and topological sort
         const dag = get_entity_names(orma_schema)
             .filter(el => !priority_entities.includes(el))
-            .reduce((acc, el) => {
-                const parents = get_child_edges(el, orma_schema)
-                acc[el] = parents.map(
-                    (parent_edge: any) => parent_edge.to_entity
-                )
-                return acc
-            }, {} as Record<string, string[]>)
+            .reduce(
+                (acc, el) => {
+                    const parents = get_child_edges(el, orma_schema)
+                    acc[el] = parents.map((parent_edge: any) => parent_edge.to_entity)
+                    return acc
+                },
+                {} as Record<string, string[]>
+            )
 
         const sorted = toposort(dag)
         const table_names = [...priority_entities, ...sorted.flat()]
@@ -131,17 +116,11 @@ const delete_all_rows = async (
     const entity_names = get_entity_names(orma_schema)
 
     const disable_fk = `SET session_replication_role = 'replica';`
-    const delete_statements = entity_names
-        .map(el => `DELETE FROM ${schema_name}.${el}`)
-        .join(';\n')
+    const delete_statements = entity_names.map(el => `DELETE FROM ${schema_name}.${el}`).join(';\n')
     const enable_fk = `SET session_replication_role = 'DEFAULT';`
 
     try {
-        await db_adapter([
-            { sql_string: disable_fk },
-            { sql_string: delete_statements },
-            { sql_string: enable_fk },
-        ])
+        await db_adapter([{ sql_string: disable_fk }, { sql_string: delete_statements }, { sql_string: enable_fk }])
     } catch (err) {
         console.error('error while deleting database rows', err)
     }
@@ -174,8 +153,7 @@ const mutate_retried = async (
     retries: number
 ) =>
     promise_retry(
-        async () =>
-            await orma_mutate(mutation, db_adapter, orma_schema),
+        async () => await orma_mutate(mutation, db_adapter, orma_schema),
         { retries, minTimeout: 1_000 },
         is_db_retryable
     )
@@ -201,19 +179,14 @@ const hydrate_rows = async (
 
         if (!rows?.length) return
 
-        const msg = `${i + 1}/${table_names.length} Hydrated ${
-            rows.length
-        } rows for ${table_name}`
+        const msg = `${i + 1}/${table_names.length} Hydrated ${rows.length} rows for ${table_name}`
         console.time(msg)
 
         for (let j = 0; j < rows.length / batch_size; j++) {
-            const batch_rows = rows.slice(
-                batch_size * j,
-                batch_size * (j + 1)
-            )
+            const batch_rows = rows.slice(batch_size * j, batch_size * (j + 1))
             const mutation = {
                 $operation: 'create',
-                [table_name]: batch_rows,
+                [table_name]: batch_rows
             }
 
             // Apply extra macros (e.g. add_resource_ids) if provided
@@ -221,11 +194,7 @@ const hydrate_rows = async (
                 extra_macros(mutation)
             }
 
-            process.stdout.write(
-                `Inserting ${table_name}: ${j * batch_size} / ${
-                    rows.length
-                }\r`
-            )
+            process.stdout.write(`Inserting ${table_name}: ${j * batch_size} / ${rows.length}\r`)
 
             await mutate_retried(mutation, orma_schema, db_adapter, retries)
 

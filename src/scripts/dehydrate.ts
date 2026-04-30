@@ -1,4 +1,4 @@
-import { createWriteStream, existsSync, rmSync, mkdirSync, writeFileSync } from 'fs'
+import { createWriteStream, existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import JSONStream from 'JSONStream'
 import { orma_introspect, OrmaSchema } from 'orma'
 import { get_entity_names } from 'orma/build/helpers/schema_helpers'
@@ -23,13 +23,13 @@ export const dehydrate = async (args: DehydrateArgs) => {
         db_adapter,
         schema_name = 'public',
         database_type = 'postgres' as const,
-        hydration_folder_path = `${process.cwd()}/hydration`,
+        hydration_folder_path = `${process.cwd()}/hydration`
     } = args
 
     const orma_schema =
         args.orma_schema ??
         (await orma_introspect(schema_name, db_adapter, {
-            database_type,
+            database_type
         }))
 
     const entities = get_entity_names(orma_schema)
@@ -45,11 +45,7 @@ export const dehydrate = async (args: DehydrateArgs) => {
         const [hydration_rows] = await db_adapter([{ sql_string: query }])
 
         if (hydration_rows.length > 0) {
-            await write_hydration(
-                table_name,
-                hydration_rows,
-                hydration_folder_path
-            )
+            await write_hydration(table_name, hydration_rows, hydration_folder_path)
         }
     }
 
@@ -62,11 +58,7 @@ const log = (file_name: string, length: number) => (i: number) => {
         process.stdout.clearLine(0)
         process.stdout.cursorTo(0)
         process.stdout.write(
-            `Dehydrating ${file_name
-                .split('/')
-                .pop()
-                .split('_hydration.json')
-                .shift()}: ${i}/${length}`
+            `Dehydrating ${file_name.split('/').pop().split('_hydration.json').shift()}: ${i}/${length}`
         )
     }
 }
@@ -80,15 +72,9 @@ async function* hydration_stream(array: any[], log_fn: (i: number) => void) {
 }
 
 // Stream hydration rows to disk using JSONStream
-const stream_hydration_rows_to_disk = async (
-    filename: string,
-    dataArray: any[]
-) => {
+const stream_hydration_rows_to_disk = async (filename: string, dataArray: any[]) => {
     const jsonStream = JSONStream.stringify(`[\n`, `,\n`, `\n]\n`, 4)
-    const dataStream = hydration_stream(
-        dataArray,
-        log(filename, dataArray.length)
-    )
+    const dataStream = hydration_stream(dataArray, log(filename, dataArray.length))
 
     const readableStream = Readable.from(dataStream)
     const fileStream = createWriteStream(filename)
@@ -99,9 +85,7 @@ const stream_hydration_rows_to_disk = async (
             const chunks = chunk.toString().split('\n')
             const chunkWithTab = chunks
                 .map(line => {
-                    return ['[', ']', ',', ''].includes(line)
-                        ? line
-                        : `    ${line}`
+                    return ['[', ']', ',', ''].includes(line) ? line : `    ${line}`
                 })
                 .join('\n')
             callback(null, chunkWithTab)
@@ -109,22 +93,13 @@ const stream_hydration_rows_to_disk = async (
     })
 
     try {
-        await pipeline(
-            readableStream,
-            jsonStream,
-            addTabTransform,
-            fileStream
-        )
+        await pipeline(readableStream, jsonStream, addTabTransform, fileStream)
     } catch (error) {
         console.error('Failed to write hydration data to file:', error)
     }
 }
 
-const write_hydration = async (
-    table_name: string,
-    hydration_rows: any[],
-    hydration_folder_path: string
-) => {
+const write_hydration = async (table_name: string, hydration_rows: any[], hydration_folder_path: string) => {
     mkdirSync(hydration_folder_path, { recursive: true })
 
     const file_path = `${hydration_folder_path}/${table_name}_hydration.json`
@@ -132,19 +107,10 @@ const write_hydration = async (
     await stream_hydration_rows_to_disk(file_path, hydration_rows)
 }
 
-const write_hydration_index = (
-    entities: string[],
-    hydration_folder_path: string
-) => {
-    const existing_entities = entities.filter(entity =>
-        existsSync(`${hydration_folder_path}/${entity}_hydration.json`)
-    )
+const write_hydration_index = (entities: string[], hydration_folder_path: string) => {
+    const existing_entities = entities.filter(entity => existsSync(`${hydration_folder_path}/${entity}_hydration.json`))
 
-    const imports = existing_entities
-        .map(
-            entity => `import ${entity} from './${entity}_hydration.json'`
-        )
-        .join('\n')
+    const imports = existing_entities.map(entity => `import ${entity} from './${entity}_hydration.json'`).join('\n')
 
     const json = `export const hydration_data = {
     ${existing_entities.join(',\n    ')}

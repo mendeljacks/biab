@@ -61,14 +61,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(
-            fake_prepopulated_data,
-            fake_pool,
-            fake_orma_schema,
-            fake_db_adapter,
-            fake_trans,
-            {}
-        )
+        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_db_adapter, fake_trans, {})
         sinon.restore()
     })
     test(prepopulate.name, async () => {
@@ -78,14 +71,7 @@ describe('Crud Orma', () => {
         sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
             return {}
         })
-        await prepopulate(
-            fake_prepopulated_data,
-            fake_pool,
-            fake_orma_schema,
-            fake_db_adapter,
-            fake_trans,
-            {}
-        )
+        await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_db_adapter, fake_trans, {})
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
@@ -105,14 +91,7 @@ describe('Crud Orma', () => {
             roles: [role]
         }
 
-        await orma.mutate_handler(
-            mutation,
-            fake_pool,
-            fake_orma_schema,
-            stub_db_adapter,
-            fake_trans,
-            add_resource_ids
-        )
+        await orma.mutate_handler(mutation, fake_pool, fake_orma_schema, stub_db_adapter, fake_trans, add_resource_ids)
 
         const body = {
             users: {

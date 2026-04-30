@@ -34,19 +34,14 @@ export const access_token_to_jwt = async (
 ) => {
     // Fetch the user's profile with the access token and bearer
     const google_user: GoogleUser = await axios
-        .get(
-            `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`,
-            { headers: { Authorization: `Bearer ${id_token}` } }
-        )
+        .get(`https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${access_token}`, {
+            headers: { Authorization: `Bearer ${id_token}` }
+        })
         .then(res => res.data)
 
     const user = await ensure_user_exists(google_user)
 
-    const token = await make_token(
-        user.id,
-        user.user_has_roles?.map(({ role_id }) => role_id) || [],
-        jwt_secret
-    )
+    const token = await make_token(user.id, jwt_secret)
 
     return { token, user_id: user.id }
 }

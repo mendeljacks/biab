@@ -1,0 +1,1 @@
+pnpm prettier --write src/ && pnpm exec organize-imports-cli src/ && pnpm run bump

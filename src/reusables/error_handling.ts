@@ -38,9 +38,7 @@ export const with_stack_trace = (error: AppError): AppError => {
     }
 }
 
-export const add_error_code = <
-    E extends Omit<AppError, 'error_code'> | Omit<AppError, 'error_code'>[]
->(
+export const add_error_code = <E extends Omit<AppError, 'error_code'> | Omit<AppError, 'error_code'>[]>(
     error_code: keyof typeof error_status_codes,
     error_response: E
 ): E extends any[] ? AppError[] : AppError => {
@@ -57,10 +55,13 @@ export const add_error_code = <
 export type CleanAxiosError = ReturnType<typeof get_clean_axios_error>
 export const get_clean_axios_error = (axios_error: any) => {
     const pick = (keys: string[], obj: Record<string, any>) =>
-        keys.reduce((acc, key) => {
-            if (obj[key] !== undefined) acc[key] = obj[key]
-            return acc
-        }, {} as Record<string, any>)
+        keys.reduce(
+            (acc, key) => {
+                if (obj[key] !== undefined) acc[key] = obj[key]
+                return acc
+            },
+            {} as Record<string, any>
+        )
 
     return {
         config: {
@@ -123,20 +124,14 @@ export const get_external_request_error_message = (
     message: string | undefined
 ) => {
     if (error.response) {
-        return `External request to ${external_service_name} failed: '${
-            message || error.message
-        }'`
+        return `External request to ${external_service_name} failed: '${message || error.message}'`
     }
 
     if (error.request) {
-        return `External request to ${external_service_name} got no response: '${
-            message || error.message
-        }'`
+        return `External request to ${external_service_name} got no response: '${message || error.message}'`
     }
 
-    return `External request to ${external_service_name} did not send: '${
-        message || error.message
-    }'`
+    return `External request to ${external_service_name} did not send: '${message || error.message}'`
 }
 
 export const get_external_request_error = (
@@ -147,11 +142,7 @@ export const get_external_request_error = (
     return {
         error_code: 'external_service_error',
         timestamp: new Date().toUTCString(),
-        message: get_external_request_error_message(
-            external_service_name,
-            axios_error,
-            message
-        ),
+        message: get_external_request_error_message(external_service_name, axios_error, message),
         axios_error: get_clean_axios_error(axios_error)
     } as AppError
 }
@@ -159,10 +150,7 @@ export const get_external_request_error = (
 export const map_error_res = <T extends AppErrorRes>(
     error_res: T,
     fn: (error: AppError, i: number | undefined) => AppError
-): T =>
-    (Array.isArray(error_res)
-        ? error_res.map(fn)
-        : fn(error_res, undefined)) as T
+): T => (Array.isArray(error_res) ? error_res.map(fn) : fn(error_res, undefined)) as T
 
 /**
  * For when the axios error has an AppError inside, e.g. an axios request to the server

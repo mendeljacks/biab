@@ -1,5 +1,5 @@
-import { AppError } from './error_handling'
 import { operation, RetryOperation, TimeoutsOptions } from 'retry'
+import { AppError } from './error_handling'
 
 export const is_network_error = async (error: any) => {
     if (
@@ -41,9 +41,7 @@ export const promise_retry = <T>(
                 resolve(result)
             } catch (error: any) {
                 const retry = await should_retry(error).catch(err => {
-                    console.error(
-                        `Error in should_retry function: ${err.message}`
-                    )
+                    console.error(`Error in should_retry function: ${err.message}`)
                     return false
                 })
 

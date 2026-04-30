@@ -1,14 +1,14 @@
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
+import { add_resource_ids } from '../../config/extra_macros'
+import { fake_db_adapter } from '../../tests/fake_byo_query_fn'
+import { fake_orma_schema } from '../../tests/fake_orma_schema'
+import { fake_pool } from '../../tests/fake_pool'
+import { fake_trans } from '../../tests/fake_trans'
+import { mutate, query, welcome } from '../controllers'
 import { authenticate, make_token } from './auth'
 import { fake_secret } from './auth_google.test'
 import { ensure_perms } from './perms'
-import { mutate, query, welcome } from '../controllers'
-import { fake_orma_schema } from '../../tests/fake_orma_schema'
-import { fake_pool } from '../../tests/fake_pool'
-import { fake_db_adapter } from '../../tests/fake_byo_query_fn'
-import { fake_trans } from '../../tests/fake_trans'
-import { add_resource_ids } from '../../config/extra_macros'
 
 const fake_connection_edges = {
     reviews: [
@@ -37,7 +37,7 @@ export const admin = 1
 export const user = 2
 const everyone = [admin, user]
 const admin_only = [admin]
-const disabled = []
+const disabled = [] as number[]
 export const fake_ensure_permissions = async () => {}
 export const fake_role_has_permissions = {
     migrations: { create: disabled, read: disabled, update: disabled, delete: disabled },
@@ -59,8 +59,8 @@ export const fake_role_has_permissions = {
 
 describe('Auth', () => {
     test('Requires jwt to user query/mutate', async () => {
-        const admin_token = await make_token(1, [1], fake_secret)
-        const user_token = await make_token(1, [2], fake_secret)
+        const admin_token = await make_token(1, fake_secret)
+        const user_token = await make_token(1, fake_secret)
         const t1 = await query(
             {
                 body: {},
@@ -72,7 +72,8 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_db_adapter
+            fake_db_adapter,
+            [1]
         )
         const t2 = await mutate(
             {
@@ -87,7 +88,8 @@ describe('Auth', () => {
             fake_ensure_permissions,
             fake_db_adapter,
             fake_trans,
-            add_resource_ids
+            add_resource_ids,
+            [2]
         )
 
         expect(t1).to.deep.equal({})
@@ -104,7 +106,8 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_db_adapter
+                fake_db_adapter,
+                []
             )
         } catch (error) {
             err = error
@@ -120,7 +123,8 @@ describe('Auth', () => {
                 fake_ensure_permissions,
                 fake_db_adapter,
                 fake_trans,
-                add_resource_ids
+                add_resource_ids,
+                []
             )
         } catch (error) {
             err2 = error
@@ -131,7 +135,7 @@ describe('Auth', () => {
     })
     test('make token can reject', async () => {
         try {
-            await make_token(1, [2], undefined)
+            await make_token(1, undefined as any)
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.equal(true)
@@ -149,7 +153,7 @@ describe('Auth', () => {
         try {
             await ensure_perms(
                 { users: { id: true, user_has_roles: { id: true, users: { id: true } } } },
-                { user_id: 1, role_ids: [1] },
+                [1],
                 'query',
                 fake_role_has_permissions
             )
@@ -158,24 +162,14 @@ describe('Auth', () => {
             expect(error.message.length > 0).to.deep.equal(true)
         }
         try {
-            await ensure_perms(
-                { users: { id: true } },
-                { user_id: 1, role_ids: [2] },
-                'query',
-                fake_role_has_permissions
-            )
+            await ensure_perms({ users: { id: true } }, [2], 'query', fake_role_has_permissions)
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.deep.equal(true)
         }
 
         try {
-            await ensure_perms(
-                { users: { id: true } },
-                { user_id: 1, role_ids: [2] },
-                'mutate',
-                fake_role_has_permissions
-            )
+            await ensure_perms({ users: { id: true } }, [2], 'mutate', fake_role_has_permissions)
             expect(true).to.equal(false)
         } catch (error) {
             expect(error.message.length > 0).to.deep.equal(true)

@@ -25,15 +25,10 @@ export const ajv_validator = (schema: any, data: any) => {
     return true
 }
 
-const get_ajv_validation_error = (
-    error: ErrorObject,
-    base_message?: string
-) => {
+const get_ajv_validation_error = (error: ErrorObject, base_message?: string) => {
     return {
         error_code: 'validation_error',
-        message: base_message
-            ? `${base_message}: ${error.message}`
-            : error.message,
+        message: base_message ? `${base_message}: ${error.message}` : error.message,
         path: error.instancePath
             ?.split('/')
             .filter(el => el !== '')

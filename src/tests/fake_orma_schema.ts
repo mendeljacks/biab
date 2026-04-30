@@ -66,11 +66,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['email'] },
-                { $fields: ['phone'] },
-                { $fields: ['resource_id'] }
-            ]
+            $unique_keys: [{ $fields: ['email'] }, { $fields: ['phone'] }, { $fields: ['resource_id'] }]
         },
         user_has_roles: {
             $database_type: 'postgres' as const,
@@ -106,10 +102,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['resource_id'] },
-                { $fields: ['role_id', 'user_id'] }
-            ],
+            $unique_keys: [{ $fields: ['resource_id'] }, { $fields: ['role_id', 'user_id'] }],
             $foreign_keys: [
                 {
                     $fields: ['user_id'],
@@ -151,10 +144,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['name'] },
-                { $fields: ['resource_id'] }
-            ]
+            $unique_keys: [{ $fields: ['name'] }, { $fields: ['resource_id'] }]
         },
         reviews: {
             $database_type: 'postgres' as const,
@@ -198,10 +188,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['resource_id'] },
-                { $fields: ['place_id', 'user_id'] }
-            ],
+            $unique_keys: [{ $fields: ['resource_id'] }, { $fields: ['place_id', 'user_id'] }],
             $foreign_keys: [
                 {
                     $fields: ['user_id'],
@@ -246,11 +233,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['google_place_id'] },
-                { $fields: ['name'] },
-                { $fields: ['resource_id'] }
-            ]
+            $unique_keys: [{ $fields: ['google_place_id'] }, { $fields: ['name'] }, { $fields: ['resource_id'] }]
         },
         review_has_photos: {
             $database_type: 'postgres' as const,
@@ -286,10 +269,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['resource_id'] },
-                { $fields: ['photo_id', 'review_id'] }
-            ],
+            $unique_keys: [{ $fields: ['resource_id'] }, { $fields: ['photo_id', 'review_id'] }],
             $foreign_keys: [
                 {
                     $fields: ['review_id'],
@@ -331,10 +311,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['resource_id'] },
-                { $fields: ['url'] }
-            ]
+            $unique_keys: [{ $fields: ['resource_id'] }, { $fields: ['url'] }]
         },
         clubs: {
             $database_type: 'postgres' as const,
@@ -370,10 +347,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['name'] },
-                { $fields: ['resource_id'] }
-            ],
+            $unique_keys: [{ $fields: ['name'] }, { $fields: ['resource_id'] }],
             $foreign_keys: [
                 {
                     $fields: ['photo_id'],
@@ -419,10 +393,7 @@ export const fake_orma_schema = {
             $primary_key: {
                 $fields: ['id']
             },
-            $unique_keys: [
-                { $fields: ['user_id', 'club_id'] },
-                { $fields: ['resource_id'] }
-            ],
+            $unique_keys: [{ $fields: ['user_id', 'club_id'] }, { $fields: ['resource_id'] }],
             $foreign_keys: [
                 {
                     $fields: ['club_id'],

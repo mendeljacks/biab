@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs'
-import { orma_introspect, orma_mutate, orma_query, ConnectionEdges, OrmaSchema } from 'orma'
+import { ConnectionEdges, orma_introspect, orma_mutate, orma_query, OrmaSchema } from 'orma'
 import { validate_mutation } from 'orma/build/mutate/verifications/mutate_validation'
 
 export type DbAdapter = (connection: any) => (sqls: any) => Promise<any>
@@ -29,11 +29,7 @@ export const mutate_handler = (
 
         await ensure_valid_mutation(mutation, orma_schema)
 
-        const mutation_results = await orma_mutate(
-            mutation,
-            db_adapter(connection),
-            orma_schema
-        )
+        const mutation_results = await orma_mutate(mutation, db_adapter(connection), orma_schema)
         return mutation_results
     }, pool)
 }
@@ -45,12 +41,7 @@ export const query_handler = (
     db_adapter: DbAdapter,
     connection_edges: ConnectionEdges
 ) => {
-    return orma_query(
-        query,
-        orma_schema,
-        db_adapter(pool),
-        connection_edges
-    )
+    return orma_query(query, orma_schema, db_adapter(pool), connection_edges)
 }
 
 export const introspect = async (output_path: string, pool: Pool, db_adapter: DbAdapter) => {

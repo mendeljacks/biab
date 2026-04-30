@@ -1,8 +1,7 @@
-import { AppError } from './error_handling'
-import { is_network_error, promise_retry } from './promise_retry'
 import { expect } from 'chai'
 import { describe, test } from 'mocha'
 import sinon from 'sinon'
+import { is_network_error, promise_retry } from './promise_retry'
 
 describe('promise_retry', () => {
     afterEach(() => {
@@ -10,11 +9,7 @@ describe('promise_retry', () => {
     })
     test('should resolve immediately on first success', async () => {
         const successFn = sinon.stub().resolves('success')
-        const result = await promise_retry(
-            successFn,
-            { minTimeout: 1 },
-            is_network_error
-        )
+        const result = await promise_retry(successFn, { minTimeout: 1 }, is_network_error)
         expect(result).to.equal('success')
         expect(successFn.callCount).to.equal(1)
     })
@@ -25,11 +20,7 @@ describe('promise_retry', () => {
         failingFn.onCall(1).rejects(new Error('Failed 2'))
         failingFn.onCall(2).resolves('success')
 
-        const result = await promise_retry(
-            failingFn,
-            { retries: 3, minTimeout: 1, randomize: false },
-            async () => true
-        )
+        const result = await promise_retry(failingFn, { retries: 3, minTimeout: 1, randomize: false }, async () => true)
         expect(result).to.equal('success')
         expect(failingFn.callCount).to.equal(3)
     })
@@ -50,9 +41,7 @@ describe('promise_retry', () => {
             )
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Persistent error'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Persistent error')
             expect(failingFn.callCount).to.equal(4)
         }
     })
@@ -65,16 +54,10 @@ describe('promise_retry', () => {
         const shouldRetry = sinon.stub().resolves(true)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 2, minTimeout: 1 },
-                shouldRetry
-            )
+            await promise_retry(failingFn, { retries: 2, minTimeout: 1 }, shouldRetry)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Custom error'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Custom error')
             expect(failingFn.callCount).to.equal(3)
             expect(shouldRetry.callCount).to.equal(3)
         }
@@ -86,16 +69,10 @@ describe('promise_retry', () => {
         const shouldRetry = sinon.stub().resolves(false)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 3, minTimeout: 1 },
-                shouldRetry
-            )
+            await promise_retry(failingFn, { retries: 3, minTimeout: 1 }, shouldRetry)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Non-retryable error'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Non-retryable error')
             expect(failingFn.callCount).to.equal(1)
             expect(shouldRetry.callCount).to.equal(1)
         }
@@ -107,16 +84,10 @@ describe('promise_retry', () => {
         const failingFn = sinon.stub().rejects(axiosError)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 1, minTimeout: 1 },
-                is_network_error
-            )
+            await promise_retry(failingFn, { retries: 1, minTimeout: 1 }, is_network_error)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Axios error'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Axios error')
             expect(failingFn.callCount).to.equal(2)
         }
     })
@@ -126,16 +97,10 @@ describe('promise_retry', () => {
         const failingFn = sinon.stub().rejects(regularError)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 3, minTimeout: 1 },
-                is_network_error
-            )
+            await promise_retry(failingFn, { retries: 3, minTimeout: 1 }, is_network_error)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Regular error'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Regular error')
             expect(failingFn.callCount).to.equal(1)
         }
     })
@@ -145,13 +110,9 @@ describe('promise_retry', () => {
         const failingFn = sinon.stub().rejects(error)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 1, minTimeout: 1 },
-                async () => {
-                    throw new Error('Retry check failed')
-                }
-            )
+            await promise_retry(failingFn, { retries: 1, minTimeout: 1 }, async () => {
+                throw new Error('Retry check failed')
+            })
             expect(true).to.equal(false)
         } catch (caughtError: any) {
             expect(failingFn.callCount).to.equal(1)
@@ -181,11 +142,7 @@ describe('promise_retry', () => {
         failingFn.onCall(1).rejects(new Error('Failed 2'))
         failingFn.onCall(2).resolves('success')
 
-        const result = await promise_retry(
-            failingFn,
-            { retries: 3, minTimeout: 1 },
-            async () => true
-        )
+        const result = await promise_retry(failingFn, { retries: 3, minTimeout: 1 }, async () => true)
         expect(result).to.equal('success')
         expect(failingFn.callCount).to.equal(3)
     })
@@ -195,17 +152,11 @@ describe('promise_retry', () => {
         const failingFn = sinon.stub().rejects(error)
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 1, minTimeout: 1 },
-                is_network_error
-            )
+            await promise_retry(failingFn, { retries: 1, minTimeout: 1 }, is_network_error)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
             expect(caughtError.additional_info.error).to.equal(error)
-            expect(caughtError.additional_info.error.stack).to.include(
-                'Original error'
-            )
+            expect(caughtError.additional_info.error.stack).to.include('Original error')
         }
     })
     test('should not retry if not network error', async () => {
@@ -221,16 +172,10 @@ describe('promise_retry', () => {
         })
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 2, minTimeout: 1 },
-                is_network_error
-            )
+            await promise_retry(failingFn, { retries: 2, minTimeout: 1 }, is_network_error)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Failed 0'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Failed 0')
         }
     })
     test('should reject with last error if network error', async () => {
@@ -252,16 +197,10 @@ describe('promise_retry', () => {
         })
 
         try {
-            await promise_retry(
-                failingFn,
-                { retries: 2, minTimeout: 1 },
-                is_network_error
-            )
+            await promise_retry(failingFn, { retries: 2, minTimeout: 1 }, is_network_error)
             expect(true).to.equal(false)
         } catch (caughtError: any) {
-            expect(caughtError.additional_info.error.message).to.equal(
-                'Failed 2'
-            )
+            expect(caughtError.additional_info.error.message).to.equal('Failed 2')
         }
     })
 })

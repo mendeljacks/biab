@@ -1,4 +1,4 @@
-import { OrmaSchema, get_mutation_diff, ConnectionEdges } from 'orma'
+import { ConnectionEdges, get_mutation_diff, OrmaSchema } from 'orma'
 import { add_resource_ids } from '../config/extra_macros'
 import { DbAdapter, mutate_handler, Pool, query_handler } from '../config/orma'
 
@@ -21,13 +21,7 @@ export const prepopulate = async (
             acc[val] = true
             return acc
         }, {})
-        const result = await query_handler(
-            { [table_name]: columns },
-            pool,
-            orma_schema,
-            db_adapter,
-            connection_edges
-        )
+        const result = await query_handler({ [table_name]: columns }, pool, orma_schema, db_adapter, connection_edges)
         let diff = get_mutation_diff(result, { [table_name]: populatable_rows })
         diff[table_name] = diff[table_name]?.filter(el => el.$operation !== 'delete')
 

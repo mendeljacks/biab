@@ -1,4 +1,4 @@
-import { OrmaSchema, ConnectionEdges } from 'orma'
+import { ConnectionEdges, OrmaSchema } from 'orma'
 import { mutation_entity_deep_for_each } from 'orma/build/mutate/helpers/mutate_helpers'
 import { query_for_each } from 'orma/build/query/query_helpers'
 import { Pool } from '../../config/orma'
@@ -23,15 +23,14 @@ export type RoleHasPerms = {
 }
 
 export const ensure_perms = async (
-    query,
-    token_content: TokenContent,
+    query: Record<string, any>,
+    role_ids: (string | number)[],
     mode: 'query' | 'mutate',
     role_has_perms: RoleHasPerms
 ) => {
-    const { user_id, role_ids } = token_content
     let needed_perms = {}
     const deep_for_each = mode === 'query' ? query_for_each : mutation_entity_deep_for_each
-    deep_for_each(query, (value, path, entity_name) => {
+    deep_for_each(query, (value, _path, entity_name) => {
         if (entity_name.startsWith('$')) {
             return
         }
@@ -46,9 +45,7 @@ export const ensure_perms = async (
     const missing_perms = table_names.reduce((acc: string[], table_name: string) => {
         const operations = Object.keys(needed_perms[table_name])
         for (const operation of operations) {
-            if (
-                !role_has_perms[table_name][operation].some(role_id => role_ids.includes(role_id))
-            ) {
+            if (!role_has_perms[table_name][operation].some((role_id: string | number) => role_ids.includes(role_id))) {
                 acc.push(table_name)
             }
         }
