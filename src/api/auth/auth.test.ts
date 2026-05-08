@@ -65,28 +65,36 @@ describe('Auth', () => {
                 body: {},
                 headers: { authorization: `Bearer ${admin_token}` }
             },
-            fake_secret,
-            fake_pool,
-            fake_connection_edges,
-            fake_role_has_permissions,
-            fake_orma_schema,
-            fake_ensure_permissions,
-            fake_db_adapter as any,
-            [1]
+            {
+                pool: fake_pool,
+                connection_edges: fake_connection_edges,
+                orma_schema: fake_orma_schema,
+                db_type: fake_db_adapter as any
+            },
+            {
+                jwt_secret: fake_secret,
+                role_has_perms: fake_role_has_permissions,
+                ensure_ownership: fake_ensure_permissions,
+                role_ids: [1]
+            }
         )
         const t2 = await mutate(
             {
                 body: {},
                 headers: { authorization: `Bearer ${user_token}` }
             },
-            fake_secret,
-            fake_pool,
-            fake_connection_edges,
-            fake_role_has_permissions,
-            fake_orma_schema,
-            fake_ensure_permissions,
-            fake_db_adapter as any,
-            [2],
+            {
+                pool: fake_pool,
+                connection_edges: fake_connection_edges,
+                orma_schema: fake_orma_schema,
+                db_type: fake_db_adapter as any
+            },
+            {
+                jwt_secret: fake_secret,
+                role_has_perms: fake_role_has_permissions,
+                ensure_ownership: fake_ensure_permissions,
+                role_ids: [2]
+            },
             add_resource_ids
         )
 
@@ -98,14 +106,18 @@ describe('Auth', () => {
         try {
             const t1 = await query(
                 {},
-                fake_secret,
-                fake_pool,
-                fake_connection_edges,
-                fake_role_has_permissions,
-                fake_orma_schema,
-                fake_ensure_permissions,
-                fake_db_adapter as any,
-                []
+                {
+                    pool: fake_pool,
+                    connection_edges: fake_connection_edges,
+                    orma_schema: fake_orma_schema,
+                    db_type: fake_db_adapter as any
+                },
+                {
+                    jwt_secret: fake_secret,
+                    role_has_perms: fake_role_has_permissions,
+                    ensure_ownership: fake_ensure_permissions,
+                    role_ids: []
+                }
             )
         } catch (error) {
             err = error
@@ -113,14 +125,18 @@ describe('Auth', () => {
         try {
             const t2 = await mutate(
                 { body: {} },
-                fake_secret,
-                fake_pool,
-                fake_connection_edges,
-                fake_role_has_permissions,
-                fake_orma_schema,
-                fake_ensure_permissions,
-                fake_db_adapter as any,
-                [],
+                {
+                    pool: fake_pool,
+                    connection_edges: fake_connection_edges,
+                    orma_schema: fake_orma_schema,
+                    db_type: fake_db_adapter as any
+                },
+                {
+                    jwt_secret: fake_secret,
+                    role_has_perms: fake_role_has_permissions,
+                    ensure_ownership: fake_ensure_permissions,
+                    role_ids: []
+                },
                 add_resource_ids
             )
         } catch (error) {
@@ -134,16 +150,16 @@ describe('Auth', () => {
         try {
             await make_token(1, undefined as any)
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.equal(true)
         }
     })
     test('authenticate token can reject', async () => {
         try {
             await authenticate({ headers: { authorization: 'Bearer oops' } }, 'secret')
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.equal(true)
         }
     })
     test('Requre perm for reading', async () => {
@@ -155,21 +171,21 @@ describe('Auth', () => {
                 fake_role_has_permissions
             )
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.deep.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.deep.equal(true)
         }
         try {
             await ensure_perms({ users: { id: true } }, [2], 'query', fake_role_has_permissions)
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.deep.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.deep.equal(true)
         }
 
         try {
             await ensure_perms({ users: { id: true } }, [2], 'mutate', fake_role_has_permissions)
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.deep.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.deep.equal(true)
         }
     })
 

@@ -1,4 +1,4 @@
-export const fake_trans = async (fn, pool: { connect: Function }) => {
+export const fake_trans = async (fn: (connection: any) => Promise<any>, pool: { connect: Function }) => {
     const connection = await pool.connect()
     try {
         await connection.query('BEGIN')

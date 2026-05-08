@@ -8,13 +8,13 @@ export const run_process = async (arg_list: string[]): Promise<any> => {
             stdio: 'pipe'
         })
 
-        let output = []
-        let err = []
-        child_process.stdout.on('data', data => {
+        let output: string[] = []
+        let err: string[] = []
+        child_process.stdout?.on('data', (data: Buffer) => {
             // console.log(data.toString())
             output.push(data.toString())
         })
-        child_process.stderr.on('data', data => {
+        child_process.stderr?.on('data', (data: Buffer) => {
             // console.error(data.toString())
             err.push(data.toString())
         })

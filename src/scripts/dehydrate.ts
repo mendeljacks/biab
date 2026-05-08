@@ -62,7 +62,7 @@ const log = (file_name: string, length: number) => (i: number) => {
             process.stdout.cursorTo(0)
         }
         process.stdout.write(
-            `Dehydrating ${file_name.split('/').pop().split('_hydration.json').shift()}: ${i}/${length}`
+            `Dehydrating ${(file_name.split('/').pop() ?? '').split('_hydration.json').shift()}: ${i}/${length}`
         )
     }
 }
@@ -85,7 +85,7 @@ const stream_hydration_rows_to_disk = async (filename: string, dataArray: any[])
 
     // Fix formatting of JSONStream output - add indentation
     const addTabTransform = new Transform({
-        transform(chunk, encoding, callback) {
+        transform(chunk: Buffer, _encoding: string, callback: (error?: Error | null, data?: any) => void) {
             const chunks = chunk.toString().split('\n')
             const chunkWithTab = chunks
                 .map(line => {

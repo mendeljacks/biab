@@ -1,6 +1,6 @@
 {
   "name": "biab",
-  "version": "1.0.60",
+  "version": "1.0.61",
   "description": "",
   "type": "module",
   "main": "build/index.js",
@@ -58,9 +58,15 @@
   },
   "devDependencies": {
     "@jsdevtools/npm-publish": "^1.4.3",
+    "@types/chai": "^5.2.3",
     "@types/cross-spawn": "^6.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mocha": "^10.0.10",
     "@types/node": "^18.7.16",
+    "@types/pg": "^8.20.0",
+    "@types/retry": "^0.12.5",
+    "@types/semver": "^7.7.1",
+    "@types/sinon": "^21.0.1",
     "chai": "^4.3.6",
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2",

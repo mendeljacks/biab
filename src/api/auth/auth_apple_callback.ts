@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 //
 // Use this endpoint to exchange the code (which must be validated with Apple within 5 minutes) for a session in your system
 export const sign_in_with_apple = async (
-    req,
+    req: { query: { code: string; useBundleId: string } },
     server_root_uri: string,
     bundle_id: string,
     service_id: string,
@@ -21,7 +21,7 @@ export const sign_in_with_apple = async (
             team_id: team_id,
             redirect_uri: `${server_root_uri}/callbacks/sign_in_with_apple`, // does not matter here, as this is already the callback that verifies the token after the redirection
             key_id: key_id,
-            scope: undefined
+            scope: undefined as unknown as string
         },
         key_contents.replace(/\|/g, '\n'),
         'text'

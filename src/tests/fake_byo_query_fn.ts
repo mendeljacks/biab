@@ -1,6 +1,6 @@
 import { Pool } from '../config/orma'
 
-export const fake_db_adapter = (connection: Pool) => async (sqls: { sql_string }[]) => {
+export const fake_db_adapter = (connection: Pool) => async (sqls: { sql_string: string }[]) => {
     const sql = sqls.map(el => el.sql_string).join(';\n')
     const response = await connection.query(sql)
 
@@ -12,6 +12,6 @@ export const fake_db_adapter = (connection: Pool) => async (sqls: { sql_string }
 }
 
 /** @deprecated Use fake_db_adapter instead */
-export const fake_byo_query_fn = async (sqls: { sql_string }[], connection: Pool) => {
+export const fake_byo_query_fn = async (sqls: { sql_string: string }[], connection: Pool) => {
     return fake_db_adapter(connection)(sqls)
 }

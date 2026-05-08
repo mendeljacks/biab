@@ -1,10 +1,9 @@
 import { ConnectionEdges, OrmaSchema, orma_mutate_prepare } from 'orma'
 import { push_path } from 'orma/build/helpers/push_path'
 import { get_mutation_connected_errors } from 'orma/build/mutate/verifications/mutation_connected'
-import { DbAdapter } from '../../config/orma'
 
 export const ensure_ownership = async (
-    db_adapter: DbAdapter,
+    sql_function: any,
     is_admin: boolean,
     permission_entity: string,
     permission_field: string,
@@ -12,7 +11,6 @@ export const ensure_ownership = async (
     query: any,
     mode: 'query' | 'mutate',
     connection_edges: ConnectionEdges,
-    pool: any,
     orma_schema: OrmaSchema
 ) => {
     if (is_admin) {
@@ -29,8 +27,7 @@ export const ensure_ownership = async (
                   allowed_values,
                   orma_schema,
                   connection_edges,
-                  pool,
-                  db_adapter,
+                  sql_function,
                   permission_entity,
                   permission_field
               )
@@ -45,8 +42,7 @@ const get_mutate_ownership_errors = async (
     allowed_values: (string | number)[],
     orma_schema: OrmaSchema,
     connection_edges: ConnectionEdges,
-    pool: any,
-    db_adapter: DbAdapter,
+    sql_function: any,
     permission_entity: string,
     permission_field: string
 ) => {
@@ -55,7 +51,7 @@ const get_mutate_ownership_errors = async (
     const connected_errors = await get_mutation_connected_errors(
         orma_schema,
         connection_edges,
-        db_adapter(pool),
+        sql_function,
         [] as any,
         [
             {

@@ -12,8 +12,8 @@ describe('Table perms', () => {
         try {
             const result = await ensure_perms({ migrations: { id: true } }, [user], 'query', fake_role_has_permissions)
             expect(true).to.equal(false)
-        } catch (error) {
-            expect(error.message.length > 0).to.equal(true)
+        } catch (error: unknown) {
+            expect((error as Error).message.length > 0).to.equal(true)
         }
     })
 })

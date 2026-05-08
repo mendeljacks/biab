@@ -6,7 +6,7 @@ process.on('unhandledRejection', err => {
     console.log(err)
 })
 
-export const handler = promiseFn => (req, res) =>
+export const handler = (promiseFn: (req: any, res: any) => Promise<any>) => (req: any, res: any) =>
     promiseFn(req, res)
-        .then(result => res.status(200).send(result))
-        .catch(err => res.status(400).send(err))
+        .then((result: any) => res.status(200).send(result))
+        .catch((err: any) => res.status(400).send(err))

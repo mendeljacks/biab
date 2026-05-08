@@ -5,7 +5,7 @@ import { make_token } from './auth'
 
 const redirectURI = 'auth/google/callback'
 
-export const google_login = async (res, server_root_uri: string, google_client_id: string) => {
+export const google_login = async (res: { redirect: (url: string) => void }, server_root_uri: string, google_client_id: string) => {
     res.redirect(get_google_auth_url(server_root_uri, google_client_id))
 }
 

@@ -29,8 +29,8 @@ const fake_prepopulated_data = {
 
 describe('Crud Orma', () => {
     test('Validation', async () => {
-        sinon.stub(orma_original, 'orma_mutate').callsFake(async _ => 'called')
-        let err = undefined
+        sinon.stub(orma_original, 'orma_mutate').callsFake(async (_: any) => { return 'called' as any })
+        let err: unknown = undefined
         try {
             const mutation = {
                 $operation: 'create',
@@ -45,37 +45,37 @@ describe('Crud Orma', () => {
                 fake_trans,
                 add_resource_ids
             )
-        } catch (e) {
+        } catch (e: unknown) {
             err = e
         }
         sinon.restore()
-        expect(err.length > 0).to.deep.equal(true)
+        expect((err as any).length > 0).to.deep.equal(true)
     })
     test(identity.name, () => {
         expect(identity(1)).to.equal(1)
     })
     test(prepopulate.name, async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
+        sinon.stub(orma, 'query_handler').callsFake(async (mutation: any) => {
             return { roles: fake_prepopulated_data.roles }
         })
-        sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
+        sinon.stub(orma, 'mutate_handler').callsFake(async (mutation: any) => {
             return {}
         })
         await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_db_adapter, fake_trans, {})
         sinon.restore()
     })
     test(prepopulate.name, async () => {
-        sinon.stub(orma, 'query_handler').callsFake(async mutation => {
+        sinon.stub(orma, 'query_handler').callsFake(async (mutation: any) => {
             return { roles: [] }
         })
-        sinon.stub(orma, 'mutate_handler').callsFake(async mutation => {
+        sinon.stub(orma, 'mutate_handler').callsFake(async (mutation: any) => {
             return {}
         })
         await prepopulate(fake_prepopulated_data, fake_pool, fake_orma_schema, fake_db_adapter, fake_trans, {})
         sinon.restore()
     })
     test('Create a user select created_at updated_at', async () => {
-        const stub_db_adapter = connection => async sqls => sqls.map(() => [{}])
+        const stub_db_adapter = (connection: any) => async (sqls: any) => sqls.map(() => [{}])
         const user = {
             $operation: 'create',
             email: 'mendeljacks@gmail.com',
@@ -108,11 +108,11 @@ describe('Crud Orma', () => {
 
         const connection_edges = {}
 
+        const sql_function = stub_db_adapter(fake_pool)
         const result: any = await orma.query_handler(
             body,
-            fake_pool,
             fake_orma_schema,
-            stub_db_adapter,
+            sql_function,
             connection_edges
         )
         expect(result.users.length).to.equal(1)

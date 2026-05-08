@@ -9,7 +9,6 @@ export const axios = stopcock(
         return response
     },
     {
-        limit: 200,
-        interval: 1000
+        limit: 200
     }
 )
