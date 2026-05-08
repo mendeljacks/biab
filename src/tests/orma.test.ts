@@ -29,7 +29,9 @@ const fake_prepopulated_data = {
 
 describe('Crud Orma', () => {
     test('Validation', async () => {
-        sinon.stub(orma_original, 'orma_mutate').callsFake(async (_: any) => { return 'called' as any })
+        sinon.stub(orma_original, 'orma_mutate').callsFake(async (_: any) => {
+            return 'called' as any
+        })
         let err: unknown = undefined
         try {
             const mutation = {
@@ -109,12 +111,7 @@ describe('Crud Orma', () => {
         const connection_edges = {}
 
         const sql_function = stub_db_adapter(fake_pool)
-        const result: any = await orma.query_handler(
-            body,
-            fake_orma_schema,
-            sql_function,
-            connection_edges
-        )
+        const result: any = await orma.query_handler(body, fake_orma_schema, sql_function, connection_edges)
         expect(result.users.length).to.equal(1)
     })
 })

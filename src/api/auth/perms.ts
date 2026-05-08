@@ -43,7 +43,11 @@ export const ensure_perms = async (
     const missing_perms = table_names.reduce((acc: string[], table_name: string) => {
         const operations = Object.keys(needed_perms[table_name])
         for (const operation of operations) {
-            if (!(role_has_perms as Record<string, Record<string, number[]>>)[table_name][operation].some((role_id: string | number) => role_ids.includes(role_id))) {
+            if (
+                !(role_has_perms as Record<string, Record<string, number[]>>)[table_name][operation].some(
+                    (role_id: string | number) => role_ids.includes(role_id)
+                )
+            ) {
                 acc.push(table_name)
             }
         }

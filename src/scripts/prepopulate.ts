@@ -18,10 +18,13 @@ export const prepopulate = async (
     const table_names = Object.keys(populated_data)
     for (const table_name of table_names) {
         const populatable_rows = populated_data[table_name]
-        const columns = Object.keys(populatable_rows[0] as Record<string, any>).reduce((acc: Record<string, boolean>, val: string) => {
-            acc[val] = true
-            return acc
-        }, {})
+        const columns = Object.keys(populatable_rows[0] as Record<string, any>).reduce(
+            (acc: Record<string, boolean>, val: string) => {
+                acc[val] = true
+                return acc
+            },
+            {}
+        )
         const result = await query_handler({ [table_name]: columns }, orma_schema, sql_function, connection_edges)
         let diff = get_mutation_diff(result, { [table_name]: populatable_rows })
         diff[table_name] = diff[table_name]?.filter((el: any) => el.$operation !== 'delete')

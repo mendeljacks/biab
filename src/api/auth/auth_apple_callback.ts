@@ -1,5 +1,5 @@
-import AppleAuth from 'apple-auth'
-import jwt from 'jsonwebtoken'
+import AppleAuth from 'apple-auth';
+import jwt from 'jsonwebtoken';
 
 // Endpoint for the app to login or register with the `code` obtained during Sign in with Apple
 //
