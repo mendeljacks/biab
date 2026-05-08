@@ -75,7 +75,8 @@ export const query_handler = (
     return orma_query(query, orma_schema, sql_function, connection_edges)
 }
 
-export const introspect = async (output_path: string, sql_function: SqlFunction, database_type: DbType) => {
+export const introspect = async (output_path: string, pool: Pool, database_type: DbType) => {
+    const sql_function = get_db_adapter(database_type)(pool)
     const orma_schema = await orma_introspect('public', sql_function, {
         database_type
     })
