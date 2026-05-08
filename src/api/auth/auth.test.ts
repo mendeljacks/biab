@@ -38,6 +38,8 @@ const everyone = [admin, user]
 const admin_only = [admin]
 const disabled = [] as number[]
 export const fake_ensure_permissions = async () => {}
+export const fake_permission_entity = 'users'
+export const fake_permission_field = 'user_id'
 export const fake_role_has_permissions = {
     migrations: { create: disabled, read: disabled, update: disabled, delete: disabled },
     club_has_users: { create: everyone, read: everyone, update: everyone, delete: everyone },
@@ -74,8 +76,11 @@ describe('Auth', () => {
             {
                 jwt_secret: fake_secret,
                 role_has_perms: fake_role_has_permissions,
-                ensure_ownership: fake_ensure_permissions,
-                role_ids: [1]
+                role_ids: [1],
+                permission_entity: fake_permission_entity,
+                permission_field: fake_permission_field,
+                is_admin: false,
+                allowed_values: []
             }
         )
         const t2 = await mutate(
@@ -92,8 +97,11 @@ describe('Auth', () => {
             {
                 jwt_secret: fake_secret,
                 role_has_perms: fake_role_has_permissions,
-                ensure_ownership: fake_ensure_permissions,
-                role_ids: [2]
+                role_ids: [2],
+                permission_entity: fake_permission_entity,
+                permission_field: fake_permission_field,
+                is_admin: false,
+                allowed_values: []
             },
             add_resource_ids
         )
@@ -115,8 +123,11 @@ describe('Auth', () => {
                 {
                     jwt_secret: fake_secret,
                     role_has_perms: fake_role_has_permissions,
-                    ensure_ownership: fake_ensure_permissions,
-                    role_ids: []
+                    role_ids: [],
+                    permission_entity: fake_permission_entity,
+                    permission_field: fake_permission_field,
+                    is_admin: false,
+                    allowed_values: []
                 }
             )
         } catch (error) {
@@ -134,8 +145,11 @@ describe('Auth', () => {
                 {
                     jwt_secret: fake_secret,
                     role_has_perms: fake_role_has_permissions,
-                    ensure_ownership: fake_ensure_permissions,
-                    role_ids: []
+                    role_ids: [],
+                    permission_entity: fake_permission_entity,
+                    permission_field: fake_permission_field,
+                    is_admin: false,
+                    allowed_values: []
                 },
                 add_resource_ids
             )

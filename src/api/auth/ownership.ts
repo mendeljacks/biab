@@ -1,17 +1,16 @@
 import { ConnectionEdges, OrmaSchema, orma_mutate_prepare } from 'orma'
 import { push_path } from 'orma/build/helpers/push_path'
 import { get_mutation_connected_errors } from 'orma/build/mutate/verifications/mutation_connected'
+import { DbConfig, get_db_adapter } from '../../config/orma'
 
 export const ensure_ownership = async (
-    sql_function: any,
+    db_config: DbConfig,
     is_admin: boolean,
     permission_entity: string,
     permission_field: string,
     allowed_values: (string | number)[],
     query: any,
-    mode: 'query' | 'mutate',
-    connection_edges: ConnectionEdges,
-    orma_schema: OrmaSchema
+    mode: 'query' | 'mutate'
 ) => {
     if (is_admin) {
         return []
@@ -19,6 +18,9 @@ export const ensure_ownership = async (
     if (allowed_values.length === 0) {
         throw [{ message: `You do not have access to any ${permission_entity}` }]
     }
+    const { connection_edges, orma_schema, pool, db_type } = db_config
+    const sql_function = get_db_adapter(db_type)(pool)
+
     const errors =
         mode === 'query'
             ? await get_query_ownership_errors(query, allowed_values, permission_entity, permission_field)

@@ -41,6 +41,13 @@ export type Pool = {
     connect: Function
 }
 
+export type DbConfig = {
+    pool: Pool
+    connection_edges: ConnectionEdges
+    orma_schema: OrmaSchema
+    db_type: DbType
+}
+
 export const ensure_valid_mutation = async (mutation: any, orma_schema: OrmaSchema) => {
     const errors = validate_mutation(mutation, orma_schema)
     if (errors.length > 0) {
