@@ -1,13 +1,13 @@
 import { writeFileSync } from 'fs'
 import {
-    ConnectionEdges,
-    orma_introspect,
-    orma_mutate,
-    orma_query,
-    OrmaSchema,
-    pg_adapter,
-    postgres_promise_transaction,
-    mysql2_adapter
+  ConnectionEdges,
+  mysql2_adapter,
+  orma_introspect,
+  orma_mutate,
+  orma_query,
+  OrmaSchema,
+  pg_adapter,
+  postgres_promise_transaction
 } from 'orma'
 
 import { validate_mutation } from 'orma/build/mutate/verifications/mutate_validation'

@@ -1,6 +1,13 @@
 import { ConnectionEdges, OrmaSchema } from 'orma'
 import { apply_supersede_macro } from 'orma/build/query/macros/supersede_macro'
-import { DbAdapter, DbType, get_db_adapter, get_trans_fn, mutate_handler, Pool, query_handler, TransFn } from '../config/orma'
+import {
+  DbType,
+  get_db_adapter,
+  get_trans_fn,
+  mutate_handler,
+  Pool,
+  query_handler
+} from '../config/orma'
 import { authenticate } from './auth/auth'
 import { ensure_perms, EnsureOwnershipFn, RoleHasPerms } from './auth/perms'
 import { validate_orma_query } from './auth/validate'
