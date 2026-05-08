@@ -1,5 +1,6 @@
 export { dehydrate } from './scripts/dehydrate'
 export { hydrate } from './scripts/hydrate'
+export type { DbType } from './config/orma'
 
 process.on('unhandledRejection', err => {
     console.log(err)

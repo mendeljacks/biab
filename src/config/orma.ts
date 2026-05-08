@@ -1,8 +1,39 @@
 import { writeFileSync } from 'fs'
-import { ConnectionEdges, orma_introspect, orma_mutate, orma_query, OrmaSchema } from 'orma'
-import { validate_mutation } from 'orma/build/mutate/verifications/mutate_validation'
+import {
+    ConnectionEdges,
+    orma_introspect,
+    orma_mutate,
+    orma_query,
+    OrmaSchema,
+    pg_adapter,
+    postgres_promise_transaction,
+    mysql2_adapter
+} from 'orma'
 
+import { validate_mutation } from 'orma/build/mutate/verifications/mutate_validation'
 export type DbAdapter = (connection: any) => (sqls: any) => Promise<any>
+export type TransFn = (fn: any, pool: any) => Promise<any>
+export type DbType = 'postgres' | 'mysql' | 'sqlite'
+
+const db_adapters: Partial<Record<DbType, DbAdapter>> = {
+    postgres: pg_adapter,
+    mysql: mysql2_adapter
+}
+
+const trans_fns: Partial<Record<DbType, TransFn>> = {
+    postgres: postgres_promise_transaction as TransFn
+}
+
+export const get_db_adapter = (db_type: DbType): DbAdapter => {
+    const adapter = db_adapters[db_type]
+    if (!adapter) throw new Error(`No db_adapter for ${db_type}`)
+    return adapter
+}
+export const get_trans_fn = (db_type: DbType): TransFn => {
+    const trans = trans_fns[db_type]
+    if (!trans) throw new Error(`No trans fn for ${db_type}`)
+    return trans
+}
 
 export type Pool = {
     query: Function

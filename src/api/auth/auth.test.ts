@@ -72,7 +72,7 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_db_adapter,
+            fake_db_adapter as any,
             [1]
         )
         const t2 = await mutate(
@@ -86,10 +86,9 @@ describe('Auth', () => {
             fake_role_has_permissions,
             fake_orma_schema,
             fake_ensure_permissions,
-            fake_db_adapter,
-            fake_trans,
-            add_resource_ids,
-            [2]
+            fake_db_adapter as any,
+            [2],
+            add_resource_ids
         )
 
         expect(t1).to.deep.equal({})
@@ -106,7 +105,7 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_db_adapter,
+                fake_db_adapter as any,
                 []
             )
         } catch (error) {
@@ -121,10 +120,9 @@ describe('Auth', () => {
                 fake_role_has_permissions,
                 fake_orma_schema,
                 fake_ensure_permissions,
-                fake_db_adapter,
-                fake_trans,
-                add_resource_ids,
-                []
+                fake_db_adapter as any,
+                [],
+                add_resource_ids
             )
         } catch (error) {
             err2 = error
