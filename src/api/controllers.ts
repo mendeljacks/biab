@@ -21,7 +21,8 @@ export const welcome = async (to: string) => `Welcome to ${to}!`
 
 export const query = async (req: Record<string, any>, db_config: DbConfig, ownership_config: OwnershipConfig) => {
     const { pool, connection_edges, orma_schema, db_type } = db_config
-    const { jwt_secret, role_has_perms, role_ids, is_admin, permission_entity, permission_field, allowed_values } = ownership_config
+    const { jwt_secret, role_has_perms, role_ids, is_admin, permission_entity, permission_field, allowed_values } =
+        ownership_config
     const db_adapter = get_db_adapter(db_type)
     const token_content = await authenticate(req, jwt_secret)
     await validate_orma_query(req.body, orma_schema)
@@ -37,7 +38,8 @@ export const mutate = async (
     extra_macros: (mutation: any) => void
 ) => {
     const { pool, connection_edges, orma_schema, db_type } = db_config
-    const { jwt_secret, role_has_perms, role_ids, is_admin, permission_entity, permission_field, allowed_values } = ownership_config
+    const { jwt_secret, role_has_perms, role_ids, is_admin, permission_entity, permission_field, allowed_values } =
+        ownership_config
     const db_adapter = get_db_adapter(db_type)
     const trans = get_trans_fn(db_type)
     await apply_supersede_macro(
