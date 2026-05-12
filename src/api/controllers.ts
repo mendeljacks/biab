@@ -1,5 +1,5 @@
 import { apply_supersede_macro } from 'orma/build/query/macros/supersede_macro'
-import { DbConfig, get_db_adapter, get_trans_fn, mutate_handler, query_handler } from '../config/orma'
+import { DbConfig, get_db_adapter, get_trans_fn, mutate_handler, MutateHandlerOptions, query_handler } from '../config/orma'
 import { authenticate } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
 import { ensure_perms, RoleHasPerms } from './auth/perms'
@@ -35,7 +35,8 @@ export const mutate = async (
     req: Record<string, any>,
     db_config: DbConfig,
     ownership_config: OwnershipConfig,
-    extra_macros: (mutation: any) => void
+    extra_macros: (mutation: any) => void,
+    mutate_options: MutateHandlerOptions = {}
 ) => {
     const { pool, connection_edges, orma_schema, db_type } = db_config
     const { jwt_secret, role_has_perms, role_ids, is_admin, permission_entity, permission_field, allowed_values } =
@@ -55,7 +56,7 @@ export const mutate = async (
     const token_content = await authenticate(req, jwt_secret)
     await ensure_perms(req.body, role_ids, 'mutate', role_has_perms)
     await ensure_ownership(db_config, is_admin, permission_entity, permission_field, allowed_values, req.body, 'mutate')
-    return mutate_handler(req.body, pool, orma_schema, db_adapter, trans, extra_macros)
+    return mutate_handler(req.body, pool, orma_schema, db_adapter, trans, extra_macros, mutate_options)
 }
 
 export const controller = async (
@@ -63,10 +64,11 @@ export const controller = async (
     ownership_config: OwnershipConfig,
     mode: 'query' | 'mutate',
     req: Record<string, any>,
-    extra_macros?: (mutation: any) => void
+    extra_macros?: (mutation: any) => void,
+    mutate_options?: MutateHandlerOptions
 ) => {
     if (mode === 'mutate') {
-        return mutate(req, db_config, ownership_config, extra_macros!)
+        return mutate(req, db_config, ownership_config, extra_macros!, mutate_options)
     }
     return query(req, db_config, ownership_config)
 }
