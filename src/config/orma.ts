@@ -153,12 +153,32 @@ export const query_handler = (
     return orma_query(query, orma_schema, sql_function, connection_edges)
 }
 
+/**
+ * Returns a copy of `value` with every object's keys sorted alphabetically.
+ * orma's introspector queries `INFORMATION_SCHEMA.TABLES`/`COLUMNS` without
+ * `ORDER BY`, so Postgres can return rows in any heap order. Without this,
+ * the generated `orma_schema.ts` shuffles entity/column ordering across runs
+ * even when the underlying schema is unchanged.
+ */
+const deep_sort_keys = (value: any): any => {
+    if (Array.isArray(value)) return value.map(deep_sort_keys)
+    if (value && typeof value === 'object') {
+        const sorted: any = {}
+        for (const key of Object.keys(value).sort()) {
+            sorted[key] = deep_sort_keys(value[key])
+        }
+        return sorted
+    }
+    return value
+}
+
 export const introspect = async (output_path: string, pool: Pool, database_type: DbType) => {
     const sql_function = get_db_adapter(database_type)(pool)
     const orma_schema = await orma_introspect('public', sql_function, {
         database_type
     })
-    const str = `export const orma_schema = ${JSON.stringify(orma_schema, null, 2)} as const`
+    const sorted = deep_sort_keys(orma_schema)
+    const str = `export const orma_schema = ${JSON.stringify(sorted, null, 2)} as const\n`
     writeFileSync(output_path, str)
-    return orma_schema
+    return sorted
 }
