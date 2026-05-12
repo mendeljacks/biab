@@ -24,14 +24,14 @@ import { sort_database_rows } from 'orma/build/mutate/database_results/sort_data
 import { path_to_entity } from 'orma/build/mutate/helpers/mutate_helpers'
 import { generate_identifying_where, get_identifying_where } from 'orma/build/mutate/helpers/record_searching'
 import {
-    get_identifying_fields,
-    get_possible_identifying_keys
+  get_identifying_fields,
+  get_possible_identifying_keys
 } from 'orma/build/mutate/macros/identifying_fields_macro'
 import { apply_nesting_mutation_macro } from 'orma/build/mutate/macros/nesting_mutation_macro'
 import { MutationPiece, MutationPlan } from 'orma/build/mutate/plan/mutation_batches'
 import {
-    get_edge_paths_by_destination,
-    get_where_connected_clauses
+  get_edge_paths_by_destination,
+  get_where_connected_clauses
 } from 'orma/build/query/macros/where_connected_macro'
 import { get_real_entity_name } from 'orma/build/query/query'
 import { combine_wheres } from 'orma/build/query/query_helpers'

@@ -16,10 +16,10 @@ import { path_to_entity } from 'orma/build/mutate/helpers/mutate_helpers'
 
 import { validate_mutation } from 'orma/build/mutate/verifications/mutate_validation'
 import {
-    MiddlewareConfig,
-    middleware_system_prefetch,
-    OrmaQueryFn,
-    run_post_middleware_system
+  middleware_system_prefetch,
+  MiddlewareConfig,
+  OrmaQueryFn,
+  run_post_middleware_system
 } from '../api/middleware/post_middleware_system'
 export type DbAdapter = (connection: any) => (sqls: any) => Promise<any>
 export type SqlFunction = (sqls: any) => Promise<any>
@@ -104,9 +104,7 @@ export const mutate_handler = (
         }
 
         if (!orma_query_fn) {
-            throw new Error(
-                'mutate_handler: `orma_query_fn` is required when `middlewares` are provided'
-            )
+            throw new Error('mutate_handler: `orma_query_fn` is required when `middlewares` are provided')
         }
 
         // Prefetch (mainly to capture rows that will be deleted)
@@ -129,10 +127,7 @@ export const mutate_handler = (
         for (const piece of mutation_plan.mutation_pieces) {
             if (piece.record.$identifying_fields === undefined) {
                 const entity = path_to_entity(piece.path)
-                piece.record.$identifying_fields = get_primary_keys(
-                    entity,
-                    orma_schema
-                )
+                piece.record.$identifying_fields = get_primary_keys(entity, orma_schema)
             }
         }
 

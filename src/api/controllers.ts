@@ -1,5 +1,12 @@
 import { apply_supersede_macro } from 'orma/build/query/macros/supersede_macro'
-import { DbConfig, get_db_adapter, get_trans_fn, mutate_handler, MutateHandlerOptions, query_handler } from '../config/orma'
+import {
+  DbConfig,
+  get_db_adapter,
+  get_trans_fn,
+  mutate_handler,
+  MutateHandlerOptions,
+  query_handler
+} from '../config/orma'
 import { authenticate } from './auth/auth'
 import { ensure_ownership } from './auth/ownership'
 import { ensure_perms, RoleHasPerms } from './auth/perms'
