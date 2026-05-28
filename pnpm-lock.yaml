@@ -42,7 +42,7 @@ importers:
         specifier: ^4.10.3
         version: 4.24.14(next@16.2.4(@babel/core@7.29.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       orma:
-        specifier: ^1.0.281
+        specifier: 1.0.281
         version: 1.0.281
       p-limit:
         specifier: ^7.3.0
