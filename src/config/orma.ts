@@ -65,7 +65,18 @@ export const ensure_valid_mutation = async (mutation: any, orma_schema: OrmaSche
     }
 }
 
+export type PreMiddlewareFunction = (
+    mutation: any,
+    auth_data: any
+) => void | Promise<void>
+
 export type MutateHandlerOptions = {
+    /**
+     * Optional list of pre-middleware functions that run before the mutation is
+     * executed. Use these for authorization checks, validation guards, etc.
+     * If any pre-middleware throws, the entire mutation is aborted.
+     */
+    pre_middlewares?: PreMiddlewareFunction[]
     /**
      * Optional list of middlewares to run around the mutation. They run
      * inside the same transaction. See `post_middleware_system.ts`.
@@ -90,12 +101,19 @@ export const mutate_handler = (
     extra_macros: (mutation: any) => void,
     options: MutateHandlerOptions = {}
 ) => {
-    const { middlewares, orma_query_fn, auth_data } = options
+    const { pre_middlewares, middlewares, orma_query_fn, auth_data } = options
 
     return trans(async connection => {
         extra_macros(mutation)
 
         await ensure_valid_mutation(mutation, orma_schema)
+
+        // Run pre-middlewares (authorization guards, validation checks, etc.)
+        if (pre_middlewares && pre_middlewares.length > 0) {
+            for (const pre_middleware of pre_middlewares) {
+                await pre_middleware(mutation, auth_data)
+            }
+        }
 
         const sql_function = db_adapter(connection)
 
