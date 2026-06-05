@@ -42,8 +42,8 @@ importers:
         specifier: ^4.10.3
         version: 4.24.14(next@16.2.4(@babel/core@7.29.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       orma:
-        specifier: 1.0.282
-        version: 1.0.282
+        specifier: 1.0.283
+        version: 1.0.283
       p-limit:
         specifier: ^7.3.0
         version: 7.3.0
@@ -1842,8 +1842,8 @@ packages:
     engines: {node: '>=22.12.0'}
     hasBin: true
 
-  orma@1.0.282:
-    resolution: {integrity: sha512-fbDCZFp4U6Eou6mKJg1Zl4jm8tFvkWNVH1NKBUI/zgtGuHAYOtERcw5XGWO+UKfsNHwx2Di5tNJQRuAAJJLC/w==}
+  orma@1.0.283:
+    resolution: {integrity: sha512-xLbQCgXT2rS4BeOoJ25sGSM3pJQ7IXc+Egr5AFl91JNTP5K72yd7qEcNA7/gQJ+i1WneXZktgB5n8B7sdqW2uw==}
 
   p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
@@ -4181,7 +4181,7 @@ snapshots:
       editorconfig: 3.0.2
       typescript: 6.0.3
 
-  orma@1.0.282:
+  orma@1.0.283:
     dependencies:
       jsonschema: 1.5.0
       node-sql-parser: 5.4.0

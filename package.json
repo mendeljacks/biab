@@ -1,6 +1,6 @@
 {
   "name": "biab",
-  "version": "1.0.75",
+  "version": "1.0.77",
   "description": "",
   "type": "module",
   "main": "build/index.js",
@@ -49,7 +49,7 @@
     "date-fns": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "next-auth": "^4.10.3",
-    "orma": "1.0.282",
+    "orma": "1.0.283",
     "p-limit": "^7.3.0",
     "pg": "^8.8.0",
     "retry": "^0.13.1",

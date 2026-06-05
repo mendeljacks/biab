@@ -65,10 +65,7 @@ export const ensure_valid_mutation = async (mutation: any, orma_schema: OrmaSche
     }
 }
 
-export type PreMiddlewareFunction = (
-    mutation: any,
-    auth_data: any
-) => void | Promise<void>
+export type PreMiddlewareFunction = (mutation: any, auth_data: any) => void | Promise<void>
 
 export type MutateHandlerOptions = {
     /**
