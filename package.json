@@ -1,9 +1,13 @@
 {
   "name": "biab",
-  "version": "1.0.80",
+  "version": "1.0.81",
   "description": "",
   "type": "module",
   "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mendeljacks/biab.git"
+  },
   "scripts": {
     "start": "tsx -e \"import('./src/api/server.ts').then(m => m.start())\"",
     "dev": "nodemon --exec \"tsx -r dotenv/config -e \\\"import('./src/api/server.ts').then(m => m.start())\\\"\"",
