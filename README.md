@@ -307,7 +307,8 @@ npm run reset
 | `npm test` | Run the Mocha test suite |
 | `npm run coverage` | Run tests with NYC coverage report |
 | `npm run reset` | Drop and re-apply all database migrations |
-| `npm run deploy` | Publish the package to npm |
+
+Publishing is automatic: the pre-commit hook bumps the patch version, and every push runs `.github/workflows/deploy.yml`, which publishes to npm through trusted publishing (OIDC) when that version is not on npm yet. No npm token is involved.
 
 ---
 
@@ -319,7 +320,6 @@ npm run reset
 | `DATABASE_URL` | PostgreSQL connection string |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `NPM_TOKEN` | npm publish token (used by `npm run deploy`) |
 
 Create a `.env` file in the project root. The `dev`, `test`, and `reset` scripts load it automatically via `dotenv`.
 

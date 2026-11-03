@@ -2,13 +2,21 @@ name: Build
 
 on: push
 
+# Publishing uses npm trusted publishing (OIDC): npmjs.com trusts this repo's
+# deploy.yml, so there is no long-lived token to expire. npm 2FA-bypass tokens
+# lose direct publish rights in Jan 2027. The trusted publisher config on
+# npmjs.com names this file — renaming it breaks publishing.
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   Build:
     name: Build
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - uses: pnpm/action-setup@v4
       with:
@@ -17,14 +25,24 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 24
         cache: pnpm
+        registry-url: https://registry.npmjs.org
+
+    # Trusted publishing needs npm >= 11.5.1.
+    - name: Update npm
+      run: npm install -g npm@11
 
     - name: pnpm install
-      run: pnpm install 
+      run: pnpm install
 
-    # - name: Build
-    #   run: pnpm run build
-      
-    - name: pnpm run deploy
-      run: NPM_TOKEN=${{secrets.NPM_TOKEN}} pnpm run deploy
+    # The pre-commit hook bumps the version on every commit, so a new version is
+    # the normal case; skip re-runs and pushes that did not bump.
+    - name: Publish
+      run: |
+        version=$(node -p "require('./package.json').version")
+        if npm view "biab@$version" version >/dev/null 2>&1; then
+          echo "biab@$version is already on npm; skipping"
+        else
+          npm publish --ignore-scripts
+        fi
