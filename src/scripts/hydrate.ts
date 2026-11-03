@@ -1,3 +1,4 @@
+/// <reference path="../types/JSONStream.d.ts" />
 import { createReadStream, existsSync } from 'fs'
 import JSONStream from 'JSONStream'
 import { OrmaSchema, orma_introspect, orma_mutate } from 'orma'

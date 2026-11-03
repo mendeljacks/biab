@@ -1,3 +1,4 @@
+/// <reference path="../types/JSONStream.d.ts" />
 import { createWriteStream, existsSync, mkdirSync, rmSync, writeFileSync } from 'fs'
 import JSONStream from 'JSONStream'
 import { orma_introspect, OrmaSchema } from 'orma'
